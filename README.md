@@ -1,2 +1,2 @@
 # Projeto-PROG
-first project - PROG class
+First PROG project: Robots Game
