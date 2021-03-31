@@ -1,5 +1,4 @@
 // T04_G02
-
 #include <iostream>
 #include <fstream>  // used for file handling
 using namespace std;
