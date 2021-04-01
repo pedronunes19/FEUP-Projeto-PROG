@@ -23,7 +23,7 @@ int main() {
         if (cin.eof()){  // closes program with CTRL-Z (Windows) or CTRL-D (Linux)
             break;
         }
-        if (cin.fail()){  // checks for input type errors and sets menuOption to a "safe" invalid input
+        if (cin.fail()){  // checks for input type errors and sets menuOption to a "safe" invalid value
             const int safeNumber = 3;
             cin.clear();
             cin.ignore(1);
