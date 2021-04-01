@@ -13,12 +13,16 @@ void play();
 
 int main() {
     bool programExecuting = true;
-    int menuOption;
+    
     const int TIMESLEEP = 2;  // sleep functions are being used for tests purpose
     
     while(programExecuting){  // infinite loop to keep the program running until the user wants to stop
+        int menuOption;
         menu();
         cin >> menuOption;
+        if (cin.fail()){
+            break;
+        }
         switch(menuOption){
             case 0:
                 programExecuting = false;
@@ -37,6 +41,7 @@ int main() {
 
 
         }
+        cin.clear();
     }
     
     
