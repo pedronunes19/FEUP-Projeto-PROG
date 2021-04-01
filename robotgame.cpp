@@ -1,31 +1,34 @@
 // T04_G02
 #include <iostream>
-#include <chrono>  // 2 header files included with the purpose of calling a sleep function
+#include <chrono>  // 2 header files included with the purpose of calling a sleep function (might be removed later)
 #include <thread>
 #include <fstream>  // used for file handling
 using namespace std;
 
 // declaring functions
 void menu();
+void rules();
+void play();
 
 
 int main() {
+    bool programExecuting = true;
     int menuOption;
-    const int TIMESLEEP = 2;
+    const int TIMESLEEP = 2;  // sleep functions are being used for tests purpose
     
-    while(true){  // infinite loop to keep the program running until the user wants to stop
+    while(programExecuting){  // infinite loop to keep the program running until the user wants to stop
         menu();
         cin >> menuOption;
-        if (menuOption == 0){  // shuts off the program when the user chooses to exit
-            break;
-        }
         switch(menuOption){
+            case 0:
+                programExecuting = false;
+                break;
             case 1:
-                cout << "\nThis will be the Rules page" << endl;
+                rules();
                 this_thread::sleep_for(chrono::seconds(TIMESLEEP));
                 break;
             case 2:
-                cout << "\nThe game will be running here" << endl;
+                play();
                 this_thread::sleep_for(chrono::seconds(TIMESLEEP));
                 break;
             default:
@@ -43,7 +46,6 @@ int main() {
 }
 
 void menu(){  // function to draw menu
-    
     cout << "-----------------------------------------------------\n"
          << "                     ROBOTS GAME                     \n"
          << "                                                     \n"
@@ -51,6 +53,13 @@ void menu(){  // function to draw menu
          << "                      2) Play                        \n"
          << "                      0) Exit                        \n"
          << "                                                     \n"
-         << "             Select you option: ";
-         
+         << "             Select you option: ";         
+}
+
+void rules(){  // function to display rules
+    cout << "\nThis will be the Rules page" << endl;
+}
+
+void play(){  // function to play the game
+    cout << "\nThe game will be running here" << endl;
 }
