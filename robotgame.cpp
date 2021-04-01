@@ -20,28 +20,36 @@ int main() {
         int menuOption;
         menu();
         cin >> menuOption;
-        if (cin.fail()){
+        if (cin.eof()){  // closes program with CTRL-Z (Windows) or CTRL-D (Linux)
             break;
         }
-        switch(menuOption){
-            case 0:
+        if (cin.fail()){  // checks for input type errors and sets menuOption to a "safe" invalid input
+            const int safeNumber = 3;
+            cin.clear();
+            cin.ignore(1);
+            menuOption = safeNumber;
+        }
+
+        switch(menuOption){  // selects menu option
+            case 0:                                                     // Exit (program shuts down)
                 programExecuting = false;
+                cout << "Thanks for playing";
                 break;
-            case 1:
+            case 1:                                                     // Rules (displays the rules of the game)
                 rules();
                 this_thread::sleep_for(chrono::seconds(TIMESLEEP));
                 break;
-            case 2:
+            case 2:                                                     // Play (starts game)
                 play();
                 this_thread::sleep_for(chrono::seconds(TIMESLEEP));
                 break;
-            default:
+            default:                                                    // in case no valid option is selected
                 cout << "\nPlease choose a valid option" << endl;
                 this_thread::sleep_for(chrono::seconds(TIMESLEEP));
 
 
         }
-        cin.clear();
+        
     }
     
     
