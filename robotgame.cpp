@@ -5,7 +5,6 @@
 #include <fstream>  // used for file handling
 using namespace std;
 
-
 // declaring functions
 void menu();
 void rules();
