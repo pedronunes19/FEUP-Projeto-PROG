@@ -71,6 +71,7 @@ void menu(){  // function to draw menu
 
 void rules(){  // function to display rules
     cout << "\nThis will be the Rules page" << endl;
+    cout << "Changing this function" << endl;
 }
 
 void play(){  // function to play the game
