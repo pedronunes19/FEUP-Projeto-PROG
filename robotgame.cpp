@@ -14,7 +14,7 @@ void play();
 int main() {
     bool programExecuting = true;
     
-    const int TIMESLEEP = 2;  // sleep functions are being used for tests purpose
+    const int TIMESLEEP = 2;  // sleep functions are being used for test purposes
     
     while(programExecuting){  // infinite loop to keep the program running until the user wants to stop
         int menuOption;
