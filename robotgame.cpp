@@ -75,4 +75,5 @@ void rules(){  // function to display rules
 
 void play(){  // function to play the game
     cout << "\nThe game will be running here" << endl;
+    cout << " And now changing this one" << endl;
 }
