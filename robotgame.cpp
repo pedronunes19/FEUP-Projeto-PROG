@@ -70,7 +70,10 @@ void menu(){  // function to draw menu
 }
 
 void rules(){  // function to display rules
-    cout << "\nThis will be the Rules page" << endl;
+    char exitRules;
+    cout << "\nThis will be the Rules page (press any character to return to the menu) ";
+    cin >> exitRules;
+    cin.clear();
 }
 
 void play(){  // function to play the game
