@@ -8,7 +8,7 @@ using namespace std;
 // declaring functions
 void menu();
 void rules(bool &programExecuting);
-void play();
+void play(bool &programExecuting);
 
 
 int main() {
@@ -39,7 +39,7 @@ int main() {
                 rules(programExecuting);
                 break;
             case 2:                                                     // Play (starts game)
-                play();
+                play(programExecuting);
                 this_thread::sleep_for(chrono::seconds(TIMESLEEP));
                 break;
             default:                                                    // in case no valid option is selected
@@ -77,6 +77,11 @@ void rules(bool &programExecuting){  // function to display rules
 
 }
 
-void play(){  // function to play the game
-    cout << "\nThe game will be running here" << endl;
+void play(bool &programExecuting){  // function to play the game
+    string mapNumber, mapFile;
+    cin.ignore(1);
+    cout << "\nSelect which map you would like to play (ex. 01, 02, ..., 99): " << endl;    
+    getline(cin, mapNumber);
+    mapFile = "MAZE_" + mapNumber + ".txt";
+    cout << mapFile << endl;
 }
