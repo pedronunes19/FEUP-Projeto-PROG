@@ -71,17 +71,17 @@ void menu(){  // function to draw menu
 void rules(bool &programExecuting){  // function to display rules
     char exitRules;
     cout << "\nThis will be the Rules page (press any character to return to the menu) ";
-    cin >> exitRules;
-    if (cin.eof())
+    cin >> exitRules;  // wait for user input to return to menu
+    if (cin.eof())     // more CTRL-Z CTRL-D stuff
         programExecuting = false;
 
 }
 
 void play(bool &programExecuting){  // function to play the game
     string mapNumber, mapFile;
-    cin.ignore(1);
+    cin.ignore(1);  // cleans input allowing getline() to wait for input
     cout << "\nSelect which map you would like to play (ex. 01, 02, ..., 99): " << endl;    
     getline(cin, mapNumber);
-    mapFile = "MAZE_" + mapNumber + ".txt";
+    mapFile = "MAZE_" + mapNumber + ".txt";  // creates file name from number chosen by user
     cout << mapFile << endl;
 }
