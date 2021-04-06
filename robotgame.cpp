@@ -7,7 +7,7 @@ using namespace std;
 
 // declaring functions
 void menu();
-void rules();
+void rules(bool &programExecuting);
 void play();
 
 
@@ -36,7 +36,7 @@ int main() {
                 cout << "Thanks for playing";
                 break;
             case 1:                                                     // Rules (displays the rules of the game)
-                rules();
+                rules(programExecuting);
                 this_thread::sleep_for(chrono::seconds(TIMESLEEP));
                 break;
             case 2:                                                     // Play (starts game)
@@ -69,11 +69,13 @@ void menu(){  // function to draw menu
          << "             Select you option: ";         
 }
 
-void rules(){  // function to display rules
+void rules(bool &programExecuting){  // function to display rules
     char exitRules;
     cout << "\nThis will be the Rules page (press any character to return to the menu) ";
     cin >> exitRules;
-    cin.clear();
+    if (cin.eof())
+        programExecuting = false;
+
 }
 
 void play(){  // function to play the game
