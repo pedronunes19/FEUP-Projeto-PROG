@@ -1,6 +1,6 @@
 // T04_G02
 #include <iostream>
-#include <chrono>  // 2 header files included with the purpose of calling a sleep function (might be removed later)
+#include <chrono>  // can handle with time
 #include <thread>
 #include <fstream>  // used for file handling
 using namespace std;
@@ -37,7 +37,6 @@ int main() {
                 break;
             case 1:                                                     // Rules (displays the rules of the game)
                 rules(programExecuting);
-                this_thread::sleep_for(chrono::seconds(TIMESLEEP));
                 break;
             case 2:                                                     // Play (starts game)
                 play();
@@ -66,7 +65,7 @@ void menu(){  // function to draw menu
          << "                      2) Play                        \n"
          << "                      0) Exit                        \n"
          << "                                                     \n"
-         << "             Select you option: ";         
+         << "               Select you option: ";         
 }
 
 void rules(bool &programExecuting){  // function to display rules
