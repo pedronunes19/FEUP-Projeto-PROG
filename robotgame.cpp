@@ -9,11 +9,13 @@ using namespace std;
 void menu();
 void rules(bool &programExecuting);
 void play(bool &programExecuting);
-
+bool fileExists(string fileName);
+void getMapSize(string firstLine, int &height, int &widht);
+void getMapArray(ifstream mapFile);
 
 int main() {
+
     bool programExecuting = true;
-    
     const int TIMESLEEP = 2;  // sleep functions are being used for test purposes
     
     while(programExecuting){  // infinite loop to keep the program running until the user wants to stop
@@ -65,7 +67,7 @@ void menu(){  // function to draw menu
          << "                      2) Play                        \n"
          << "                      0) Exit                        \n"
          << "                                                     \n"
-         << "               Select you option: ";         
+         << "               Select your option: ";         
 }
 
 void rules(bool &programExecuting){  // function to display rules
@@ -78,10 +80,42 @@ void rules(bool &programExecuting){  // function to display rules
 }
 
 void play(bool &programExecuting){  // function to play the game
-    string mapNumber, mapFile;
-    cin.ignore(1);  // cleans input allowing getline() to wait for input
-    cout << "\nSelect which map you would like to play (ex. 01, 02, ..., 99): " << endl;    
-    getline(cin, mapNumber);
-    mapFile = "MAZE_" + mapNumber + ".txt";  // creates file name from number chosen by user
-    cout << mapFile << endl;
+    string mapNumber, mapFilePath, firstLine, currentLine;
+    bool noFile = true;  // loop variable for file check
+    int mapHeight, mapWidth;  // map dimensions
+    while(noFile){
+        cin.ignore(1);  // cleans input allowing getline() to wait for input
+        cout << "\nSelect which map you would like to play (ex. 01, 02, ..., 99): " << endl;    
+        getline(cin, mapNumber);
+        mapFilePath = "MAZE_" + mapNumber + ".txt";  // creates file name from number chosen by user
+        if (fileExists(mapFilePath))
+            break;
+        cout << "File doesn't exist";
+    }
+    
+    ifstream mapFile(mapFilePath); // opens map file for reading
+    
+    getline(mapFile, firstLine);
+    getMapSize(firstLine, mapHeight, mapWidth);
+
+    string map[mapHeight][mapWidth]; // creates map array
+}
+
+bool fileExists(string fileName){
+    ifstream file(fileName);
+    return file.good();
+}
+
+void getMapSize(string firstLine, int &height, int &width){  // 
+    const int pos = firstLine.find( " " );
+    height = stoi(firstLine.substr( 0, pos ));
+    width = stoi(firstLine.substr( pos + 3, string::npos ));
+}
+
+void getMapArray(ifstream mapFile){
+    string currentLine = "";
+    while (getline(mapFile,currentLine)){
+
+    }
+    
 }
