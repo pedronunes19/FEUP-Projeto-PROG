@@ -75,11 +75,21 @@ void rules(bool &programExecuting){  // function to display rules
     char exitRules;
     cout << "\nRULES\n\nYou can exit the game at any time with CTRL-Z (Windows) or CTRL-D (Linux)"
          << "\nSymbols:"
-         << "\n- * = electrical fence or post (map border);"
+         << "\n- * = electrical fence or post;"
          << "\n- H = player (alive); h = player (dead); the player dies when he/she collides with a fence or a post, or is captured by a robot;"
          << "\n- R = robot (alive); r = robot (destroyed=dead/stuck); a dead robot is one that collided with a fence or a post; a stuck robot is one that collided with another robot (alive or destroyed)"
          << "\nMovement:"
          << "\n- The player can only move to one of the 8 neighbour cells of his/her current cell."
+         << "\n    Q              W              E"
+         << "\n    A            player           D"
+         << "\n    Z              X              C"
+         << "\n- The player has the option to stay in his/her current position by typing 'S'."
+         << "\n- The player can't move to cells occupied by destroyed robots"
+         << "\n- Each robot can move to one of the 8 neighbour cells of its current cell, as the player."
+         << "\nOther important info:"
+         << "\n- When several robots collide, they get stuck and they are all represented by a single symbol, an 'r'."
+         << "\n- When a robot collides with other destroyed robots ('r' cells) it also gets stuck."
+         << "\n- If a robot collides with fences/posts it dies, being also represented by an 'r', and the fence/post cell at the position of the collision loses its capability to electrocute."
          << "\nPress any character when you're ready to leave";
     cin >> exitRules;  // wait for user input to return to menu
     if (cin.eof())     // more CTRL-Z CTRL-D stuff
