@@ -12,7 +12,7 @@ void rules(bool &programExecuting);
 void play(bool &programExecuting);
 bool fileExists(string fileName);
 void getMapSize(ifstream &mapFile, int &height, int &width);
-void getMap(ifstream &mapFile, vector <vector <char>> &map);
+void getMapVector(ifstream &mapFile, vector <vector <char>> &map);
 void printMap(vector <vector <char>> map);
 
 int main() {
@@ -121,7 +121,7 @@ void play(bool &programExecuting){  // function to play the game
     ifstream mapFile(mapFilePath);  // opens map file for reading
     
     getMapSize(mapFile, mapHeight, mapWidth);  
-    getMap(mapFile, map); 
+    getMapVector(mapFile, map); 
 
     printMap(map);
     
@@ -142,7 +142,7 @@ void getMapSize(ifstream &mapFile, int &height, int &width){  // function to get
     width = stoi(firstLine.substr( pos + 3, string::npos ));
 }
 
-void getMap(ifstream &mapFile, vector <vector <char>> &map){
+void getMapVector(ifstream &mapFile, vector <vector <char>> &map){
     int i = 0;
     string currentLine = "";
     while (getline(mapFile,currentLine)){
