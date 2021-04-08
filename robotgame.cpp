@@ -74,7 +74,12 @@ void menu(){  // function to draw menu
 void rules(bool &programExecuting){  // function to display rules
     char exitRules;
     cout << "\nRULES\n\nYou can exit the game at any time with CTRL-Z (Windows) or CTRL-D (Linux)"
-         << "\n..."
+         << "\nSymbols:"
+         << "\n- * = electrical fence or post (map border);"
+         << "\n- H = player (alive); h = player (dead); the player dies when he/she collides with a fence or a post, or is captured by a robot;"
+         << "\n- R = robot (alive); r = robot (destroyed=dead/stuck); a dead robot is one that collided with a fence or a post; a stuck robot is one that collided with another robot (alive or destroyed)"
+         << "\nMovement:"
+         << "\n- The player can only move to one of the 8 neighbour cells of his/her current cell."
          << "\nPress any character when you're ready to leave";
     cin >> exitRules;  // wait for user input to return to menu
     if (cin.eof())     // more CTRL-Z CTRL-D stuff
@@ -91,7 +96,7 @@ void play(bool &programExecuting){  // function to play the game
     // run loop until a existing file is found
     while(noFile){ 
         cin.ignore(1);  // cleans input allowing getline() to wait for input
-        cout << "\nSelect which map you would like to play (ex. 01, 02, ..., 99): " << endl;    
+        cout << "\nSelect which map you would like to play (ex. 01, 02, ..., 99) or 0 to go back to the menu: " << endl;    
         getline(cin, mapNumber);
         if (cin.eof()){
             programExecuting = false;
