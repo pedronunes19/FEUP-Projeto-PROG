@@ -11,7 +11,7 @@ void rules(bool &programExecuting);
 void play(bool &programExecuting);
 bool fileExists(string fileName);
 void getMapSize(string firstLine, int &height, int &widht);
-void getMapArray(ifstream mapFile);
+void getMapArray(ifstream mapFile, string currentLine);
 
 int main() {
 
@@ -112,8 +112,7 @@ void getMapSize(string firstLine, int &height, int &width){  //
     width = stoi(firstLine.substr( pos + 3, string::npos ));
 }
 
-void getMapArray(ifstream mapFile){
-    string currentLine = "";
+void getMapArray(ifstream mapFile, string currentLine = ""){
     while (getline(mapFile,currentLine)){
 
     }
