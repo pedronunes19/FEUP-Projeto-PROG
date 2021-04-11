@@ -4,6 +4,7 @@
 #include <thread>
 #include <fstream>  // used for file handling
 #include <vector>
+#include "gamestructs.hpp"  // contains structs created for the game
 using namespace std;
 
 // declaring functions
