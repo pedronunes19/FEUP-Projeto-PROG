@@ -16,6 +16,7 @@ void getMapSize(ifstream &mapFile, int &height, int &width);
 void getMapVector(ifstream &mapFile, vector <vector <char>> &map);
 void printMap(vector <vector <char>> map);
 void getGameInfo(vector <vector <char>> map, Player &P);
+void editInput(string &input);
 
 
 int main() {
@@ -118,6 +119,7 @@ void play(bool &programExecuting){  // function to play the game
         cin.ignore(1);  // cleans input allowing getline() to wait for input
         cout << "\nSelect which map you would like to play (ex. 01, 02, ..., 99) or 0 to go back to the menu: " << endl;    
         getline(cin, mapNumber);
+        editInput(mapNumber);
         if (mapNumber == "0"){
             return;
         }
