@@ -15,7 +15,8 @@ bool fileExists(string fileName);
 void getMapSize(ifstream &mapFile, int &height, int &width);
 void getMapVector(ifstream &mapFile, vector <vector <char>> &map);
 void printMap(vector <vector <char>> map);
-void getGameInfoStart(vector <vector <char>> map);
+void getGameInfo(vector <vector <char>> map, Player &P);
+
 
 int main() {
 
@@ -102,14 +103,19 @@ void rules(bool &programExecuting){  // function to display rules
 void play(bool &programExecuting){  // function to play the game
     string mapNumber, mapFilePath, firstLine, currentLine;
     bool noFile = true;  // loop variable for file check
+    bool run = true;  // variable to keep game going
     int mapHeight, mapWidth;  // map dimensions
     vector <vector <char>> map;  // map stored in a vector
+    struct Player P;
 
     // run loop until a existing file is found
     while(noFile){ 
         cin.ignore(1);  // cleans input allowing getline() to wait for input
         cout << "\nSelect which map you would like to play (ex. 01, 02, ..., 99) or 0 to go back to the menu: " << endl;    
         getline(cin, mapNumber);
+        if (mapNumber == "0"){
+            return;
+        }
         if (cin.eof()){
             programExecuting = false;
             return;
@@ -120,12 +126,18 @@ void play(bool &programExecuting){  // function to play the game
         cout << "File doesn't exist";
     }
     
+
     ifstream mapFile(mapFilePath);  // opens map file for reading
     
+    // build map vector
     getMapSize(mapFile, mapHeight, mapWidth);  
     getMapVector(mapFile, map); 
-    getGameInfoStart(map);
-    printMap(map);
+    
+    while(run){
+        getGameInfo(map, P);  // update info
+        printMap(map);  // print current state of map
+        break;  // safe exit until the code is updated
+    }
     
     mapFile.close();  // close file at end
     
@@ -158,7 +170,7 @@ void getMapVector(ifstream &mapFile, vector <vector <char>> &map){
     
 }
 
-void printMap(vector <vector <char>> map){
+void printMap(vector <vector <char>> map){  //  function to print the map from map vector
     for (int i = 0; i < map.size(); i++){
         for (int j = 0; j < map[i].size(); j++){
             cout << map.at(i).at(j);
@@ -167,18 +179,24 @@ void printMap(vector <vector <char>> map){
     }
 }
 
-void getGameInfoStart(vector <vector <char>> map){
-    int rCount = 1;
+void getGameInfo(vector <vector <char>> map, Player &P){  // function to get information after last play
     for (int i = 0; i < map.size(); i++){
         for (int j = 0; j < map[i].size(); j++){
-            if (map.at(i).at(j) = 'H'){
-                struct player P;
-                P.x = j;
-                P.y = i;
-                P.alive = true;
+
+            switch(map.at(i).at(j)){
+                case 'H':
+                    P.x = j;
+                    P.y = i;
+                    P.alive = true;
+                    break;
+                case 'h':
+                    P.x = j;
+                    P.y = i;
+                    P.alive = false;
+                    break;
+                
 
             }
-            
-        cout << endl;
+        }    
     }
 }
