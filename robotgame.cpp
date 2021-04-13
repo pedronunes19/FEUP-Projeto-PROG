@@ -15,6 +15,7 @@ bool fileExists(string fileName);
 void getMapSize(ifstream &mapFile, int &height, int &width);
 void getMapVector(ifstream &mapFile, vector <vector <char>> &map);
 void printMap(vector <vector <char>> map);
+void getGameInfoStart(vector <vector <char>> map);
 
 int main() {
 
@@ -123,7 +124,7 @@ void play(bool &programExecuting){  // function to play the game
     
     getMapSize(mapFile, mapHeight, mapWidth);  
     getMapVector(mapFile, map); 
-
+    getGameInfoStart(map);
     printMap(map);
     
     mapFile.close();  // close file at end
@@ -162,6 +163,22 @@ void printMap(vector <vector <char>> map){
         for (int j = 0; j < map[i].size(); j++){
             cout << map.at(i).at(j);
         }
+        cout << endl;
+    }
+}
+
+void getGameInfoStart(vector <vector <char>> map){
+    int rCount = 1;
+    for (int i = 0; i < map.size(); i++){
+        for (int j = 0; j < map[i].size(); j++){
+            if (map.at(i).at(j) = 'H'){
+                struct player P;
+                P.x = j;
+                P.y = i;
+                P.alive = true;
+
+            }
+            
         cout << endl;
     }
 }
