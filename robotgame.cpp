@@ -74,6 +74,11 @@ void menu(){  // function to draw menu
          << "               Select your option: ";         
 }
 
+void editInput(string &input){
+    int pos = input.find(' ');
+    input = input.substr(0, pos);
+}
+
 void rules(bool &programExecuting){  // function to display rules
     char exitRules;
     cout << "\nRULES\n\nYou can exit the game at any time with CTRL-Z (Windows) or CTRL-D (Linux)"
@@ -126,16 +131,24 @@ void play(bool &programExecuting){  // function to play the game
         cout << "File doesn't exist";
     }
     
-
-    ifstream mapFile(mapFilePath);  // opens map file for reading
+    // opens map file for reading
+    ifstream mapFile(mapFilePath);
     
     // build map vector
     getMapSize(mapFile, mapHeight, mapWidth);  
     getMapVector(mapFile, map); 
     
     while(run){
+        string moveOption;
         getGameInfo(map, P);  // update info
         printMap(map);  // print current state of map
+        if (!P.alive){
+            break;
+        }
+        
+        getline(cin, moveOption);
+        editInput(moveOption);
+        cout << moveOption << endl;
         break;  // safe exit until the code is updated
     }
     
