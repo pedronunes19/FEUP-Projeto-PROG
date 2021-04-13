@@ -1,6 +1,6 @@
 // header file containing structs for game "characters"
 
-struct player{
+struct Player{
     // coordinates
     int x;
     int y;
@@ -8,11 +8,10 @@ struct player{
     // status
     bool alive;
 
-    // presentation
-    char sprites[2] = {'h', 'H'};
+    
 };
 
-struct robot{
+struct Robot{
     // coordinates
     int x;
     int y;
@@ -23,6 +22,5 @@ struct robot{
     // moving order
     int order;
 
-    // presentation
-    char sprites[2] = {'r', 'R'};
+    
 };
