@@ -3,4 +3,6 @@ First PROG project: Robots Game
 
 ## Updates
 ### Potential fixes
-- input check at menu causing problems with multiple cin fails (multiple wrong type)
+- avoiding input errors at max
+### Other stuff
+- moving functions to header files?
