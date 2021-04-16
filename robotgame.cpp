@@ -128,8 +128,10 @@ void play(bool &programExecuting){  // function to play the game
             return;
         }
         mapFilePath = "MAZE_" + mapNumber + ".txt";  // creates file name from number chosen by user
-        if (fileExists(mapFilePath))
+        if (fileExists(mapFilePath)){
+            cout << "Playing map " << mapNumber << "!" << endl;
             break;
+        }
         cout << "File doesn't exist";
     }
     
@@ -139,7 +141,10 @@ void play(bool &programExecuting){  // function to play the game
     // build map vector
     getMapSize(mapFile, mapHeight, mapWidth);  
     getMapVector(mapFile, map); 
-    
+
+    // starts clock to count gametime
+    auto gameStart = chrono::steady_clock::now();
+
     while(run){
         string moveOption;
         getGameInfo(map, P);  // update info
@@ -153,9 +158,11 @@ void play(bool &programExecuting){  // function to play the game
         cout << moveOption << endl;
         break;  // safe exit until the code is updated
     }
-    
+    // time when game is over
+    auto gameEnd = chrono::steady_clock::now();
+
     mapFile.close();  // close file at end
-    
+    cout << "time played: " << chrono::duration_cast<chrono::seconds>(gameEnd - gameStart).count() << endl;
 }
 
 bool fileExists(string fileName){  // function to check if a map file exists
