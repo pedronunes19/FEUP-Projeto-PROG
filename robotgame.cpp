@@ -1,7 +1,7 @@
 // T04_G02
 #include <iostream>
-#include <chrono>  // can handle with time
-#include <thread>
+#include <chrono>  // can handle time
+#include <thread>  // used for sleep function
 #include <fstream>  // used for file handling
 #include <vector>
 #include "gamestructs.hpp"  // contains structs created for the game
@@ -75,7 +75,7 @@ void menu(){  // function to draw menu
          << "               Select your option: ";         
 }
 
-void editInput(string &input){
+void editInput(string &input){  // function to edit the user input, only considering what is written before any space
     int pos = input.find(' ');
     input = input.substr(0, pos);
 }
@@ -99,6 +99,7 @@ void rules(bool &programExecuting){  // function to display rules
          << "\n- When several robots collide, they get stuck and they are all represented by a single symbol, an 'r'."
          << "\n- When a robot collides with other destroyed robots ('r' cells) it also gets stuck."
          << "\n- If a robot collides with fences/posts it dies, being also represented by an 'r', and the fence/post cell at the position of the collision loses its capability to electrocute."
+         << "\n- User input is only considered until the first space ('W', 'W  ' and 'W  S' are all considered by the program as 'W')"
          << "\nPress any character when you're ready to leave";
     cin >> exitRules;  // wait for user input to return to menu
     if (cin.eof())     // more CTRL-Z CTRL-D stuff
@@ -108,27 +109,27 @@ void rules(bool &programExecuting){  // function to display rules
 
 void play(bool &programExecuting){  // function to play the game
     string mapNumber, mapFilePath, firstLine, currentLine;
-    bool noFile = true;  // loop variable for file check
+    bool noFile = true;  // variable for file check
     bool run = true;  // variable to keep game going
     int mapHeight, mapWidth;  // map dimensions
     vector <vector <char>> map;  // map stored in a vector
-    struct Player P;
+    struct Player P;  // declaring the player as a Player struct
 
     // run loop until a existing file is found
+    cin.ignore(1);  // cleans input allowing getline() to wait for input when first reading map number
     while(noFile){ 
-        cin.ignore(1);  // cleans input allowing getline() to wait for input
         cout << "\nSelect which map you would like to play (ex. 01, 02, ..., 99) or 0 to go back to the menu: " << endl;    
         getline(cin, mapNumber);
         editInput(mapNumber);
-        if (mapNumber == "0"){
+        if (mapNumber == "0"){  // back to menu
             return;
         }
-        if (cin.eof()){
+        if (cin.eof()){  // CTRL-Z/CTRL-D
             programExecuting = false;
             return;
         }
         mapFilePath = "MAZE_" + mapNumber + ".txt";  // creates file name from number chosen by user
-        if (fileExists(mapFilePath)){
+        if (fileExists(mapFilePath)){  // break the loop and move into the game
             cout << "Playing map " << mapNumber << "!" << endl;
             break;
         }
@@ -149,7 +150,7 @@ void play(bool &programExecuting){  // function to play the game
         string moveOption;
         getGameInfo(map, P);  // update info
         printMap(map);  // print current state of map
-        if (!P.alive){
+        if (!P.alive){  // end the game if the player loses
             break;
         }
         
@@ -170,7 +171,7 @@ bool fileExists(string fileName){  // function to check if a map file exists
     return file.good();
 }
 
-void getMapSize(ifstream &mapFile, int &height, int &width){  // function to get map size (height, width)
+void getMapSize(ifstream &mapFile, int &height, int &width){  // function to get map size (height, width) by reading the numbers from the first line of the file
     string firstLine;
     getline(mapFile, firstLine);
     const int pos = firstLine.find( " " );
@@ -178,12 +179,12 @@ void getMapSize(ifstream &mapFile, int &height, int &width){  // function to get
     width = stoi(firstLine.substr( pos + 3, string::npos ));
 }
 
-void getMapVector(ifstream &mapFile, vector <vector <char>> &map){
+void getMapVector(ifstream &mapFile, vector <vector <char>> &map){  // function to read map from file to vector
     int i = 0;
     string currentLine = "";
-    while (getline(mapFile,currentLine)){
+    while (getline(mapFile,currentLine)){  // reads line by line
         vector <char> temp;
-        for (int j = 0; j < currentLine.length(); j++) {
+        for (int j = 0; j < currentLine.length(); j++) {  // push every character in the line to the vector
             temp.push_back(currentLine[j]);
         }
         map.push_back(temp);
@@ -206,12 +207,12 @@ void getGameInfo(vector <vector <char>> map, Player &P){  // function to get inf
         for (int j = 0; j < map[i].size(); j++){
 
             switch(map.at(i).at(j)){
-                case 'H':
+                case 'H':               // info of alive player
                     P.x = j;
                     P.y = i;
                     P.alive = true;
                     break;
-                case 'h':
+                case 'h':               // info of dead player
                     P.x = j;
                     P.y = i;
                     P.alive = false;
