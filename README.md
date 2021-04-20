@@ -1,8 +1,10 @@
 # Projeto-PROG
 First PROG project: Robots Game
 
-## Updates
-### Potential fixes
-- avoiding input errors at max
-### Other stuff
-- moving functions to header files?
+## To Do
+- avoid any input problems
+- check if player move is valid
+- get player/robot info in getGameVector (as in pathfinder)
+- implement the robot moving function
+
+
