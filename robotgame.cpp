@@ -1,5 +1,6 @@
 // T04_G02
 #include <iostream>
+#include <iomanip>
 #include <chrono>  // can handle time
 #include <thread>  // used for sleep function
 #include <fstream>  // used for file handling
@@ -100,7 +101,7 @@ void rules(bool &programExecuting){  // function to display rules
          << "\n- When a robot collides with other destroyed robots ('r' cells) it also gets stuck."
          << "\n- If a robot collides with fences/posts it dies, being also represented by an 'r', and the fence/post cell at the position of the collision loses its capability to electrocute."
          << "\n- User input is only considered until the first space ('W', 'W  ' and 'W  S' are all considered by the program as 'W')"
-         << "\nPress any character when you're ready to leave";
+         << "\nPress any character when you're ready to leave -> ";
     cin >> exitRules;  // wait for user input to return to menu
     if (cin.eof())     // more CTRL-Z CTRL-D stuff
         programExecuting = false;
@@ -108,7 +109,7 @@ void rules(bool &programExecuting){  // function to display rules
 }
 
 void play(bool &programExecuting){  // function to play the game
-    string mapNumber, mapFilePath, firstLine, currentLine;
+    string mapNumber, mapFilePath, firstLine, currentLine, leaderboardFile;
     bool noFile = true;  // variable for file check
     bool run = true;  // variable to keep game going
     int mapHeight, mapWidth;  // map dimensions
@@ -146,9 +147,11 @@ void play(bool &programExecuting){  // function to play the game
     // starts clock to count gametime
     auto gameStart = chrono::steady_clock::now();
 
+    // get info from map (robots, player)
+    getGameInfo(map, P); 
+
     while(run){
         string moveOption;
-        getGameInfo(map, P);  // update info
         printMap(map);  // print current state of map
         if (!P.alive){  // end the game if the player loses
             break;
@@ -161,6 +164,14 @@ void play(bool &programExecuting){  // function to play the game
     }
     // time when game is over
     auto gameEnd = chrono::steady_clock::now();
+
+    leaderboardFile = "MAZE_" + mapNumber + "_WINNERS.txt";  // file name for leaderboard
+
+    // create leaderboard file if it doesn't exist yet
+    if (!fileExists(leaderboardFile)){
+        ofstream leaderboard(leaderboardFile);
+        leaderboard << "Player         " << " - Time" << endl << "----------------------" << endl;
+    }
 
     mapFile.close();  // close file at end
     cout << "time played: " << chrono::duration_cast<chrono::seconds>(gameEnd - gameStart).count() << endl;
