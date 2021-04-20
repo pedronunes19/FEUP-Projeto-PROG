@@ -4,17 +4,23 @@
 #include <string>
 using namespace std;
 
-void getMapVector( ifstream& mapFile, vector <vector <char>>& map, vector <vector <int>>& RobotPositions, vector <vector <int>>& PlayerPositions );
+void getMapVector( ifstream& mapFile, vector <vector <char>>& map, vector <vector <int>>& RobotPositions, vector <int>& PlayerPosition );
 void getMapSize( ifstream& mapFile, int& height, int& width );
-
+void printMap(vector <vector <char>>& map);
+void move( vector <vector <char>>& map, vector <vector <int>>& RobotPositions, vector <int>& PlayerPosition);
 
 int main() {
 	ifstream mapFile( "MAZE_02.txt" );
 	vector <vector <char>> mapVector;
-	vector <vector <int>> RobotPositions, PlayerPositions;
+	vector <vector <int>> RobotPositions;
+    vector <int> PlayerPosition;
 	int height, width;
 
-
+    getMapSize(mapFile, height, width);
+    getMapVector(mapFile, mapVector, RobotPositions, PlayerPosition);
+    printMap(mapVector);
+    move(mapVector, RobotPositions, PlayerPosition);
+    printMap(mapVector);
 }
 
 void getMapSize( ifstream& mapFile, int& height, int& width ) {  // function to get map size (height, width) by reading the numbers from the first line of the file
@@ -25,7 +31,7 @@ void getMapSize( ifstream& mapFile, int& height, int& width ) {  // function to 
 	width = stoi( firstLine.substr( pos + 3, string::npos ) );
 }
 
-void getMapVector( ifstream& mapFile, vector <vector <char>>& map, vector <vector <int>>& RobotPositions, vector <vector <int>>& PlayerPositions ) {  // function to read map from file to vector
+void getMapVector( ifstream& mapFile, vector <vector <char>>& map, vector <vector <int>>& RobotPositions, vector <int>& PlayerPosition ) {  // function to read map from file to vector
 	int i = 0;
 	int robotsfound;
 	string currentLine = "";
@@ -43,9 +49,8 @@ void getMapVector( ifstream& mapFile, vector <vector <char>>& map, vector <vecto
 				RobotPositions.push_back( tempPos );
 			}
 			else if ( ch == 'H' ) { 
-				tempPos.at( 0 ) = i;
-				tempPos.at( 1 ) = j;
-				PlayerPositions.push_back( tempPos );
+				PlayerPosition.at( 0 ) = i;
+				PlayerPosition.at( 1 ) = j;
 			}
 
 		}
@@ -55,7 +60,31 @@ void getMapVector( ifstream& mapFile, vector <vector <char>>& map, vector <vecto
 
 }
 
-void path( vector <vector <char>>& map ) {
+void printMap(vector <vector <char>>& map){  //  function to print the map from map vector
+    for (int i = 0; i < map.size(); i++){
+        for (int j = 0; j < map[i].size(); j++){
+            cout << map.at(i).at(j);
+        }
+        cout << endl;
+    }
+}
 
+void move( vector <vector <char>>& map, vector <vector <int>>& RobotPositions, vector <int>& PlayerPosition) {
+    char temp;
+    vector <int> direction(2);
+    for(int i = 0; i < RobotPositions.size(); i++){
+        vector <int> robot = RobotPositions[i];
+    
+        if(robot[0] < PlayerPosition[0]) direction[0] = 1;
+        else if (robot[0] > PlayerPosition[0]) direction[0] = -1;
+        else direction[0] = 0;
 
+        if(robot[1] < PlayerPosition[1]) direction[1] = 1;
+        else if (robot[1] > PlayerPosition[1]) direction[1] = -1;
+        else direction[1] = 0;    
+
+        temp = map[robot[0]+direction[0]][robot[1]+direction[1]];
+        map[robot[0]+direction[0]][robot[1]+direction[1]] = map[robot[0]][robot[1]];
+        map[robot[0]][robot[1]] = temp;
+    }
 }
