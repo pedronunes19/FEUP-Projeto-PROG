@@ -2,7 +2,6 @@
 #include <iostream>
 #include <iomanip>
 #include <chrono>  // can handle time
-#include <thread>  // used for sleep function
 #include <fstream>  // used for file handling
 #include <vector>
 #include "gamestructs.hpp"  // contains structs created for the game
@@ -24,7 +23,6 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
 int main() {
 
     bool programExecuting = true;
-    const int TIMESLEEP = 2;  // sleep functions are being used for test purposes
     
     while(programExecuting){  // infinite loop to keep the program running until the user wants to stop
         int menuOption;
@@ -53,7 +51,6 @@ int main() {
                 break;
             default:                                                    // in case no valid option is selected
                 cout << "\nPlease choose a valid option" << endl;
-                this_thread::sleep_for(chrono::seconds(TIMESLEEP));
 
 
         }
