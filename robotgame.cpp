@@ -14,9 +14,9 @@ void rules(bool &programExecuting);
 void play(bool &programExecuting);
 bool fileExists(string fileName);
 void getMapSize(ifstream &mapFile, int &height, int &width);
-void getMapVector(ifstream &mapFile, vector <vector <char>> &map);
+void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P);
+void readInfo(int x, int y, char aux, Player &P);
 void printMap(vector <vector <char>> map);
-void getGameInfo(vector <vector <char>> map, Player &P);
 void editInput(string &input);
 void updateLeaderboard(string number, int time, bool &run, bool &programExecuting);
 
@@ -141,15 +141,13 @@ void play(bool &programExecuting){  // function to play the game
     // opens map file for reading
     ifstream mapFile(mapFilePath);
     
-    // build map vector
+    // build map vector and get all information needed
     getMapSize(mapFile, mapHeight, mapWidth);  
-    getMapVector(mapFile, map); 
+    getMapVector(mapFile, map, P); 
 
     // starts clock to count gametime
     auto gameStart = chrono::steady_clock::now();
 
-    // get info from map (robots, player)
-    getGameInfo(map, P); 
 
     while(run){
         string moveOption;
@@ -188,13 +186,15 @@ void getMapSize(ifstream &mapFile, int &height, int &width){  // function to get
     width = stoi(firstLine.substr( pos + 3, string::npos ));
 }
 
-void getMapVector(ifstream &mapFile, vector <vector <char>> &map){  // function to read map from file to vector
+void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P){  // function to read map from file to vector and get information on player/robots
     int i = 0;
     string currentLine = "";
     while (getline(mapFile,currentLine)){  // reads line by line
         vector <char> temp;
-        for (int j = 0; j < currentLine.length(); j++) {  // push every character in the line to the vector
-            temp.push_back(currentLine[j]);
+        for (int j = 0; j < currentLine.length(); j++) {  // read every character in the line 
+            char aux = currentLine[j];
+            temp.push_back(aux);  // add the caracter to the vector that contains the line
+            readInfo(j, i, aux, P);  // get important information from character (if there is any)
         }
         map.push_back(temp);
         i++;
@@ -211,27 +211,6 @@ void printMap(vector <vector <char>> map){  //  function to print the map from m
     }
 }
 
-void getGameInfo(vector <vector <char>> map, Player &P){  // function to get information after last play
-    for (int i = 0; i < map.size(); i++){
-        for (int j = 0; j < map[i].size(); j++){
-
-            switch(map.at(i).at(j)){
-                case 'H':               // info of alive player
-                    P.x = j;
-                    P.y = i;
-                    P.alive = true;
-                    break;
-                case 'h':               // info of dead player
-                    P.x = j;
-                    P.y = i;
-                    P.alive = false;
-                    break;
-                
-
-            }
-        }    
-    }
-}
 
 
 void updateLeaderboard(string number, int time, bool &run, bool &programExecuting){  // function to deal with leaderboards (create or update)
@@ -272,4 +251,19 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
     leaderboard.open(leaderboardFile, ios::app);
     leaderboard << playerName << " - " << time << endl;
     leaderboard.close();
+}
+
+void readInfo(int x, int y, char aux, Player &P){  // function to read a character and get important information
+            switch(aux){
+                case 'H':               // info of alive player
+                    P.x = x;
+                    P.y = y;
+                    P.alive = true;
+                    break;
+                case 'h':               // info of dead player (will probably be removed)
+                    P.x = x;
+                    P.y = y;
+                    P.alive = false;
+                    break;
+            }    
 }
