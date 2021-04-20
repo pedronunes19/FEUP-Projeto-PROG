@@ -18,6 +18,7 @@ void getMapVector(ifstream &mapFile, vector <vector <char>> &map);
 void printMap(vector <vector <char>> map);
 void getGameInfo(vector <vector <char>> map, Player &P);
 void editInput(string &input);
+void updateLeaderboard(string number, int time, bool &run, bool &programExecuting);
 
 
 int main() {
@@ -109,7 +110,7 @@ void rules(bool &programExecuting){  // function to display rules
 }
 
 void play(bool &programExecuting){  // function to play the game
-    string mapNumber, mapFilePath, firstLine, currentLine, leaderboardFile;
+    string mapNumber, mapFilePath, firstLine, currentLine;
     bool noFile = true;  // variable for file check
     bool run = true;  // variable to keep game going
     int mapHeight, mapWidth;  // map dimensions
@@ -158,23 +159,20 @@ void play(bool &programExecuting){  // function to play the game
         }
         
         getline(cin, moveOption);
+        if (cin.eof()){
+            programExecuting = false;
+            break;
+        }
         editInput(moveOption);
         cout << moveOption << endl;
+
+        // time when game is over
+        auto gameEnd = chrono::steady_clock::now();
+        updateLeaderboard(mapNumber, chrono::duration_cast<chrono::seconds>(gameEnd - gameStart).count(), run, programExecuting);
         break;  // safe exit until the code is updated
-    }
-    // time when game is over
-    auto gameEnd = chrono::steady_clock::now();
-
-    leaderboardFile = "MAZE_" + mapNumber + "_WINNERS.txt";  // file name for leaderboard
-
-    // create leaderboard file if it doesn't exist yet
-    if (!fileExists(leaderboardFile)){
-        ofstream leaderboard(leaderboardFile);
-        leaderboard << "Player         " << " - Time" << endl << "----------------------" << endl;
     }
 
     mapFile.close();  // close file at end
-    cout << "time played: " << chrono::duration_cast<chrono::seconds>(gameEnd - gameStart).count() << endl;
 }
 
 bool fileExists(string fileName){  // function to check if a map file exists
@@ -233,4 +231,45 @@ void getGameInfo(vector <vector <char>> map, Player &P){  // function to get inf
             }
         }    
     }
+}
+
+
+void updateLeaderboard(string number, int time, bool &run, bool &programExecuting){  // function to deal with leaderboards (create or update)
+    string leaderboardFile = "MAZE_" + number + "_WINNERS.txt";  // file name for leaderboard created from file number
+    string playerName;
+    bool emptyName = true;
+
+    // create leaderboard file if it doesn't exist yet
+    if (!fileExists(leaderboardFile)){
+        ofstream leaderboard(leaderboardFile);
+        leaderboard << "Player         " << " - Time" << endl << "----------------------" << endl;
+        leaderboard.close();
+    }
+    // store the player's name
+    while (emptyName){
+        cout << "Write your name here (max 15 characters): ";
+        getline(cin, playerName);
+        if (cin.eof()){
+            run = false;
+            programExecuting = false;
+            return;
+        }
+        if (playerName.length() > 0){
+            if (playerName.length() > 15){
+                playerName = playerName.substr(0, 15);
+            }
+            else{
+                for (int i = playerName.length(); i < 15; i++){
+                    playerName += ' ';
+                }
+            }
+            break;
+        }
+        cout << "You have to choose a name!" << endl;
+    }
+
+    ofstream leaderboard;
+    leaderboard.open(leaderboardFile, ios::app);
+    leaderboard << playerName << " - " << time << endl;
+    leaderboard.close();
 }
