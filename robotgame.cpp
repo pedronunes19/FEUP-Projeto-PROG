@@ -9,6 +9,7 @@ using namespace std;
 
 // declaring functions
 void menu();
+void editInput(string &input);
 void rules(bool &programExecuting);
 void play(bool &programExecuting);
 bool fileExists(string fileName);
@@ -16,7 +17,6 @@ void getMapSize(ifstream &mapFile, int &height, int &width);
 void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vector <Robot> &robots);
 void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots, int &id);
 void printMap(vector <vector <char>> map);
-void editInput(string &input);
 void updateLeaderboard(string number, int time, bool &run, bool &programExecuting);
 
 
@@ -201,6 +201,24 @@ void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vec
     
 }
 
+void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots, int &id){  // function to read a character and get important information
+            switch(aux){
+                case 'H':               // info of player
+                    P.x = x;
+                    P.y = y;
+                    P.alive = true;
+                    break;
+                case 'R':               // info of robot
+                    robots.push_back(Robot());
+                    int last = robots.size() - 1;
+                    robots[last].x = x;
+                    robots[last].y = y;
+                    robots[last].id = id;
+                    robots[last].alive = true;
+                    id++;
+            }    
+}
+
 void printMap(vector <vector <char>> map){  //  function to print the map from map vector
     for (int i = 0; i < map.size(); i++){
         for (int j = 0; j < map[i].size(); j++){
@@ -253,20 +271,4 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
     leaderboard.close();
 }
 
-void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots, int &id){  // function to read a character and get important information
-            switch(aux){
-                case 'H':               // info of alive player
-                    P.x = x;
-                    P.y = y;
-                    P.alive = true;
-                    break;
-                case 'R':
-                    robots.push_back(Robot());
-                    int last = robots.size() - 1;
-                    robots[last].x = x;
-                    robots[last].y = y;
-                    robots[last].id = id;
-                    robots[last].alive = true;
-                    id++;
-            }    
-}
+
