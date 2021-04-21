@@ -14,7 +14,7 @@ void play(bool &programExecuting);
 bool fileExists(string fileName);
 void getMapSize(ifstream &mapFile, int &height, int &width);
 void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vector <Robot> &robots);
-void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots);
+void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots, int &id);
 void printMap(vector <vector <char>> map);
 void editInput(string &input);
 void updateLeaderboard(string number, int time, bool &run, bool &programExecuting);
@@ -187,12 +187,13 @@ void getMapSize(ifstream &mapFile, int &height, int &width){  // function to get
 void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vector <Robot> &robots){  // function to read map from file to vector and get information on player/robots
     int i = 0;
     string currentLine = "";
+    int robotId = 1;  // this variable will correspond to a robot's id, when a robot is found (will be incremented when that happens)
     while (getline(mapFile,currentLine)){  // reads line by line
         vector <char> temp;
         for (int j = 0; j < currentLine.length(); j++) {  // read every character in the line 
             char aux = currentLine[j];
             temp.push_back(aux);  // add the caracter to the vector that contains the line
-            readInfo(j, i, aux, P, robots);  // get important information from character (if there is any)
+            readInfo(j, i, aux, P, robots, robotId);  // get important information from character (if there is any)
         }
         map.push_back(temp);
         i++;
@@ -252,7 +253,7 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
     leaderboard.close();
 }
 
-void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots){  // function to read a character and get important information
+void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots, int &id){  // function to read a character and get important information
             switch(aux){
                 case 'H':               // info of alive player
                     P.x = x;
@@ -264,5 +265,8 @@ void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots){  // fu
                     int last = robots.size() - 1;
                     robots[last].x = x;
                     robots[last].y = y;
+                    robots[last].id = id;
+                    robots[last].alive = true;
+                    id++;
             }    
 }

@@ -20,7 +20,7 @@ struct Robot{
     // status
     bool alive;
 
-    // moving order
-    int order;
+    // moving order (mostly a formality)
+    int id;
     
 };
