@@ -7,7 +7,6 @@ struct Player{
 
     // status
     bool alive;
-
     
 };
 
@@ -21,6 +20,5 @@ struct Robot{
 
     // moving order
     int order;
-
     
 };

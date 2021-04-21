@@ -1,7 +1,7 @@
 // T04_G02
 #include <iostream>
 #include <iomanip>
-#include <chrono>  // can handle time
+#include <chrono>  // used to handle time
 #include <fstream>  // used for file handling
 #include <vector>
 #include "gamestructs.hpp"  // contains structs created for the game
@@ -13,8 +13,8 @@ void rules(bool &programExecuting);
 void play(bool &programExecuting);
 bool fileExists(string fileName);
 void getMapSize(ifstream &mapFile, int &height, int &width);
-void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P);
-void readInfo(int x, int y, char aux, Player &P);
+void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vector <Robot> &robots);
+void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots);
 void printMap(vector <vector <char>> map);
 void editInput(string &input);
 void updateLeaderboard(string number, int time, bool &run, bool &programExecuting);
@@ -113,6 +113,7 @@ void play(bool &programExecuting){  // function to play the game
     int mapHeight, mapWidth;  // map dimensions
     vector <vector <char>> map;  // map stored in a vector
     struct Player P;  // declaring the player as a Player struct
+    vector <Robot> robots;  // vector that will contain robots as Robot structs
 
     // run loop until a existing file is found
     cin.ignore(1);  // cleans input allowing getline() to wait for input when first reading map number
@@ -140,7 +141,7 @@ void play(bool &programExecuting){  // function to play the game
     
     // build map vector and get all information needed
     getMapSize(mapFile, mapHeight, mapWidth);  
-    getMapVector(mapFile, map, P); 
+    getMapVector(mapFile, map, P, robots); 
 
     // starts clock to count gametime
     auto gameStart = chrono::steady_clock::now();
@@ -183,7 +184,7 @@ void getMapSize(ifstream &mapFile, int &height, int &width){  // function to get
     width = stoi(firstLine.substr( pos + 3, string::npos ));
 }
 
-void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P){  // function to read map from file to vector and get information on player/robots
+void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vector <Robot> &robots){  // function to read map from file to vector and get information on player/robots
     int i = 0;
     string currentLine = "";
     while (getline(mapFile,currentLine)){  // reads line by line
@@ -191,7 +192,7 @@ void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P){  /
         for (int j = 0; j < currentLine.length(); j++) {  // read every character in the line 
             char aux = currentLine[j];
             temp.push_back(aux);  // add the caracter to the vector that contains the line
-            readInfo(j, i, aux, P);  // get important information from character (if there is any)
+            readInfo(j, i, aux, P, robots);  // get important information from character (if there is any)
         }
         map.push_back(temp);
         i++;
@@ -231,12 +232,12 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
             return;
         }
         if (playerName.length() > 0){
-            if (playerName.length() > 15){
+            if (playerName.length() > 15){  // cut name at character limit
                 playerName = playerName.substr(0, 15);
             }
             else{
-                for (int i = playerName.length(); i < 15; i++){
-                    playerName += ' ';
+                for (int i = playerName.length(); i < 15; i++){  
+                    playerName += ' ';  // fill with spaces to fit 15 characters
                 }
             }
             break;
@@ -244,23 +245,24 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
         cout << "You have to choose a name!" << endl;
     }
 
+    // write the name and time to the file
     ofstream leaderboard;
     leaderboard.open(leaderboardFile, ios::app);
     leaderboard << playerName << " - " << time << endl;
     leaderboard.close();
 }
 
-void readInfo(int x, int y, char aux, Player &P){  // function to read a character and get important information
+void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots){  // function to read a character and get important information
             switch(aux){
                 case 'H':               // info of alive player
                     P.x = x;
                     P.y = y;
                     P.alive = true;
                     break;
-                case 'h':               // info of dead player (will probably be removed)
-                    P.x = x;
-                    P.y = y;
-                    P.alive = false;
-                    break;
+                case 'R':
+                    robots.push_back(Robot());
+                    int last = robots.size() - 1;
+                    robots[last].x = x;
+                    robots[last].y = y;
             }    
 }
