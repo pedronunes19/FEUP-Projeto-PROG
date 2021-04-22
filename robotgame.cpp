@@ -18,6 +18,8 @@ void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vec
 void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots, int &id);
 void printMap(vector <vector <char>> map);
 void updateLeaderboard(string number, int time, bool &run, bool &programExecuting);
+void movePlayer(vector <vector <char>>& map, string move, Player &P);
+void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player P);
 
 
 int main() {
@@ -277,6 +279,14 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
     leaderboard.open(leaderboardFile, ios::app);
     leaderboard << playerName << " - " << time << endl;
     leaderboard.close();
+}
+
+void movePlayer(vector <vector <char>>& map, string move, Player &P){
+
+}
+
+void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player P){
+    
 }
 
 
