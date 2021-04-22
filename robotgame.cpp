@@ -18,8 +18,10 @@ void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vec
 void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots, int &id);
 void printMap(vector <vector <char>> map);
 void updateLeaderboard(string number, int time, bool &run, bool &programExecuting);
+void checkMove(string moveOption, char &move, bool &valid, Player &P);
 void movePlayer(vector <vector <char>>& map, string move, Player &P);
-void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player P);
+void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P);
+bool allRobotsDead(vector <Robot> &robots);
 
 
 int main() {
@@ -58,10 +60,6 @@ int main() {
         }
         
     }
-    
-    
-
-
     return 0;
 }
 
@@ -94,13 +92,14 @@ void rules(bool &programExecuting){  // function to display rules
          << "\n    A            player           D"
          << "\n    Z              X              C"
          << "\n- The player has the option to stay in his/her current position by typing 'S'."
+         << "\n- The program reads only the first character when typing the movement"
          << "\n- The player can't move to cells occupied by destroyed robots"
          << "\n- Each robot can move to one of the 8 neighbour cells of its current cell, as the player."
          << "\nOther important info:"
          << "\n- When several robots collide, they get stuck and they are all represented by a single symbol, an 'r'."
          << "\n- When a robot collides with other destroyed robots ('r' cells) it also gets stuck."
          << "\n- If a robot collides with fences/posts it dies, being also represented by an 'r', and the fence/post cell at the position of the collision loses its capability to electrocute."
-         << "\n- User input is only considered until the first space ('W', 'W  ' and 'W  S' are all considered by the program as 'W')"
+         << "\n- Other user input is only considered until the first space ('01', '01  ' and '01  5' are all considered by the program as '01')"
          << "\nPress any character when you're ready to leave -> ";
     cin >> exitRules;  // wait for user input to return to menu
     if (cin.eof())     // more CTRL-Z CTRL-D stuff
@@ -151,31 +150,27 @@ void play(bool &programExecuting){  // function to play the game
 
     while(run){
         string moveOption;
+        char move;
+        bool validMove = false;
         printMap(map);  // print current state of map
         if (!P.alive){  // end the game if the player loses
+            cout << "You lost" << endl;
             break;
         }
-        
-        getline(cin, moveOption);
+        if (allRobotsDead(robots)){  // condition met for win
+            cout << "You win" << endl;
+            auto gameEnd = chrono::steady_clock::now();  // time when game is over                                                                          
+            updateLeaderboard(mapNumber, chrono::duration_cast<chrono::seconds>(gameEnd - gameStart).count(), run, programExecuting); 
+            break;
+        }
+        checkMove(moveOption, move, validMove, P);
+
         if (cin.eof()){
             programExecuting = false;
             break;
         }
-        editInput(moveOption);
-        cout << moveOption << endl;
-
-        // time when game is over
-        auto gameEnd = chrono::steady_clock::now();                                                                                 // both lines will be moved
-        updateLeaderboard(mapNumber, chrono::duration_cast<chrono::seconds>(gameEnd - gameStart).count(), run, programExecuting);  
         
-        /* teste
-        for (int i = 0; i < robots.size(); i++){
-            cout << robots[i].x << ' ' << robots[i].y  << ' ' << robots[i].id << endl;
-        }
-        cout << P.x << ' ' << P.y << endl;
-        */
-
-        break;  // safe exit until the code is updated
+        moveRobots(map, robots, P); // move robots towards player
     }
 
     mapFile.close();  // close file at end
@@ -281,12 +276,78 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
     leaderboard.close();
 }
 
-void movePlayer(vector <vector <char>>& map, string move, Player &P){
-
+void checkMove(string moveOption, char &move, bool &valid, Player &P){
+    while(!valid){
+            getline(cin, moveOption);
+            editInput(moveOption);
+            move = tolower(moveOption[0]);
+            if (move == 'a')  // teste
+                valid = true;
+            else
+                cout << "Invalid move" << endl;
+            if (cin.eof())
+                break;
+        }
 }
 
-void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player P){
-    
+void movePlayer(vector <vector <char>>& map, char move, Player &P){
+    int direction[2];
+
+    if (move == 'e' || move == 'd' || move == 'c') direction[0] = 1;
+    else if (move == 'q' || move == 'a' || move == 'z') direction[0] = -1;
+    else direction[0] = 0;
+
+    if (move == 'z' || move == 'x' || move == 'c') direction[1] = 1;
+    else if (move == 'q' || move == 'w' || move == 'e') direction[1] = -1;
+    else direction[1] = 0;
 }
 
+
+void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P){
+    char temp;
+    int direction[2];
+    for (int i = 0; i < robots.size(); i++){
+        if (!robots[i].alive){
+            continue; //skip iteration if robot is dead
+        }
+        if (map[robots[i].y][robots[i].x] == 'r'){
+            robots[i].alive = false;
+            continue;
+        }
+
+        if(robots[i].x < P.x) direction[0] = 1;        // define direction on x axis
+        else if (robots[i].x > P.x) direction[0] = -1;
+        else direction[0] = 0;
+
+        if(robots[i].y < P.y) direction[1] = 1;        // define direction on y axis
+        else if (robots[i].y > P.y) direction[1] = -1;
+        else direction[1] = 0;
+
+        map[robots[i].y][robots[i].x] = ' ';
+        
+        robots[i].x += direction[0];
+        robots[i].y += direction[1];
+        
+
+        temp = map[robots[i].y][robots[i].x];
+
+        if (temp == ' ') map[robots[i].y][robots[i].x] = 'R';
+        else if (temp == '*' || temp == 'R' || temp == 'r'){
+            map[robots[i].y][robots[i].x] = 'r';
+            robots[i].alive = false;
+        }
+        else{
+            map[robots[i].y][robots[i].x] = 'h';
+            P.alive = false;
+            return;
+        }
+    }
+}
+
+bool allRobotsDead(vector <Robot> &robots){
+    for (int i = 0; i < robots.size(); i++){
+        if (robots[i].alive == true) return false;
+    }
+    return true;
+}
 
