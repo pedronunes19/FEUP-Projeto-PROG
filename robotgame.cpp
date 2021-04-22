@@ -163,8 +163,16 @@ void play(bool &programExecuting){  // function to play the game
         cout << moveOption << endl;
 
         // time when game is over
-        auto gameEnd = chrono::steady_clock::now();
-        updateLeaderboard(mapNumber, chrono::duration_cast<chrono::seconds>(gameEnd - gameStart).count(), run, programExecuting);
+        auto gameEnd = chrono::steady_clock::now();                                                                                 // both lines will be moved
+        updateLeaderboard(mapNumber, chrono::duration_cast<chrono::seconds>(gameEnd - gameStart).count(), run, programExecuting);  
+        
+        /* teste
+        for (int i = 0; i < robots.size(); i++){
+            cout << robots[i].x << ' ' << robots[i].y  << ' ' << robots[i].id << endl;
+        }
+        cout << P.x << ' ' << P.y << endl;
+        */
+
         break;  // safe exit until the code is updated
     }
 
