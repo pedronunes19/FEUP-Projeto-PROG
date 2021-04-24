@@ -1,6 +1,6 @@
 // T04_G02
 #include <iostream>
-#include <bits/stdc++.h> // used for vector sorting
+#include <algorithm> // used for vector sorting
 #include <iomanip>
 #include <chrono>  // used to handle time
 #include <fstream>  // used for file handling
