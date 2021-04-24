@@ -1,5 +1,4 @@
 // T04_G02
-
 // header file containing structs for game "characters"
 
 struct Player{
@@ -23,4 +22,11 @@ struct Robot{
     // moving order (mostly a formality)
     int id;
     
+};
+
+struct LbEntry{ //struct used for leaderboard entries
+
+    std::string name;
+    int time;
+
 };

@@ -1,5 +1,6 @@
 // T04_G02
 #include <iostream>
+#include <bits/stdc++.h> // used for vector sorting
 #include <iomanip>
 #include <chrono>  // used to handle time
 #include <fstream>  // used for file handling
@@ -17,11 +18,14 @@ void getMapSize(ifstream &mapFile, int &height, int &width);
 void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vector <Robot> &robots);
 void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots, int &id);
 void printMap(vector <vector <char>> map);
-void updateLeaderboard(string number, int time, bool &run, bool &programExecuting);
-void checkMove(string moveOption, char &move, bool &valid, Player &P);
-void movePlayer(vector <vector <char>>& map, string move, Player &P);
+void checkMove(string moveOption, char &move, Player &P, int height, int width);
+void movePlayer(vector <vector <char>>& map, char move, Player &P);
 void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P);
 bool allRobotsDead(vector <Robot> &robots);
+void updateLeaderboard(string number, int time, bool &run, bool &programExecuting);
+void organizeLeaderboard(string lbPath, vector <LbEntry> &entries);
+void readEntries(string lbPath, vector <LbEntry> &entries);
+bool compare(LbEntry i1, LbEntry i2);
 
 
 int main() {
@@ -151,7 +155,6 @@ void play(bool &programExecuting){  // function to play the game
     while(run){
         string moveOption;
         char move;
-        bool validMove = false;
         printMap(map);  // print current state of map
         if (!P.alive){  // end the game if the player loses
             cout << "You lost" << endl;
@@ -163,13 +166,13 @@ void play(bool &programExecuting){  // function to play the game
             updateLeaderboard(mapNumber, chrono::duration_cast<chrono::seconds>(gameEnd - gameStart).count(), run, programExecuting); 
             break;
         }
-        checkMove(moveOption, move, validMove, P);
+        checkMove(moveOption, move, P, mapHeight, mapWidth);
 
         if (cin.eof()){
             programExecuting = false;
             break;
         }
-        
+        movePlayer(map, move, P);
         moveRobots(map, robots, P); // move robots towards player
     }
 
@@ -235,15 +238,109 @@ void printMap(vector <vector <char>> map){  //  function to print the map from m
 
 
 
+
+
+void checkMove(string moveOption, char &move, Player &P, int height, int width){  // function to check if the player's move is valid
+    bool valid = false;
+    bool limitLeft = (P.x == 1), limitRight = (P.x == width - 2), limitUp = (P.y == 1), limitDown = (P.y == height - 2);
+    while(!valid){
+            getline(cin, moveOption);
+            if (cin.eof())
+                break;
+            editInput(moveOption);
+            move = tolower(moveOption[0]);
+            if (move == 's')  
+                valid = true;
+            else if ((move == 'a' && !limitLeft) || (move == 'd' && !limitRight) || (move == 'w' && !limitUp) || (move == 'x' && !limitDown))  // verify simple diretional moves
+                valid = true;
+            else if ((((move == 'q' && !limitLeft) || (move == 'e' && !limitRight)) && !limitUp) || (((move == 'z' && !limitLeft) || (move == 'c' && !limitRight)) && !limitDown))
+                valid = true;
+            else
+                cout << "Invalid move" << endl;
+            
+        }
+}
+
+void movePlayer(vector <vector <char>>& map, char move, Player &P){
+    int direction[2];
+    char temp;
+
+    if (move == 'e' || move == 'd' || move == 'c') direction[0] = 1;
+    else if (move == 'q' || move == 'a' || move == 'z') direction[0] = -1;
+    else direction[0] = 0;
+
+    if (move == 'z' || move == 'x' || move == 'c') direction[1] = 1;
+    else if (move == 'q' || move == 'w' || move == 'e') direction[1] = -1;
+    else direction[1] = 0;
+
+    map[P.y][P.x] = ' ';
+    P.x += direction[0];
+    P.y += direction[1];
+    temp = map[P.y][P.x];
+
+    if (temp == ' ') map[P.y][P.x] = 'H';
+    else {
+        map[P.y][P.x] = 'h';
+        P.alive = false;
+    }
+}
+
+
+void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P){
+    char temp;
+    int direction[2];
+    for (int i = 0; i < robots.size(); i++){
+        if (!robots[i].alive){
+            continue; //skip iteration if robot is dead
+        }
+        if (map[robots[i].y][robots[i].x] == 'r'){
+            robots[i].alive = false;
+            continue;
+        }
+
+        if(robots[i].x < P.x) direction[0] = 1;        // define direction on x axis
+        else if (robots[i].x > P.x) direction[0] = -1;
+        else direction[0] = 0;
+
+        if(robots[i].y < P.y) direction[1] = 1;        // define direction on y axis
+        else if (robots[i].y > P.y) direction[1] = -1;
+        else direction[1] = 0;
+
+        map[robots[i].y][robots[i].x] = ' ';
+        robots[i].x += direction[0];
+        robots[i].y += direction[1];
+        temp = map[robots[i].y][robots[i].x];
+
+        if (temp == ' ') map[robots[i].y][robots[i].x] = 'R'; //
+        else if (temp == '*' || temp == 'R' || temp == 'r'){
+            map[robots[i].y][robots[i].x] = 'r';
+            robots[i].alive = false;
+        }
+        else{
+            map[robots[i].y][robots[i].x] = 'h';
+            P.alive = false;
+            return;
+        }
+    }
+}
+
+bool allRobotsDead(vector <Robot> &robots){
+    for (int i = 0; i < robots.size(); i++){
+        if (robots[i].alive == true) return false;
+    }
+    return true;
+}
+
 void updateLeaderboard(string number, int time, bool &run, bool &programExecuting){  // function to deal with leaderboards (create or update)
     string leaderboardFile = "MAZE_" + number + "_WINNERS.txt";  // file name for leaderboard created from file number
     string playerName;
     bool emptyName = true;
+    vector <LbEntry> entries;
 
     // create leaderboard file if it doesn't exist yet
     if (!fileExists(leaderboardFile)){
         ofstream leaderboard(leaderboardFile);
-        leaderboard << "Player         " << " - Time" << endl << "----------------------" << endl;
+        leaderboard << "Player          - Time" << endl << "----------------------" << endl;
         leaderboard.close();
     }
     // store the player's name
@@ -274,80 +371,53 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
     leaderboard.open(leaderboardFile, ios::app);
     leaderboard << playerName << " - " << time << endl;
     leaderboard.close();
+
+    // organize leaderboard
+    organizeLeaderboard(leaderboardFile, entries);
+    
 }
 
-void checkMove(string moveOption, char &move, bool &valid, Player &P){
-    while(!valid){
-            getline(cin, moveOption);
-            editInput(moveOption);
-            move = tolower(moveOption[0]);
-            if (move == 'a')  // teste
-                valid = true;
-            else
-                cout << "Invalid move" << endl;
-            if (cin.eof())
-                break;
-        }
-}
+void readEntries(string lbPath, vector <LbEntry> &entries){
+    ifstream lbFile(lbPath);   //open leaderboard file for reading
+    string currentLine;
+    
+    //skip first 2 lines
+    getline(lbFile, currentLine);
+    getline(lbFile, currentLine);
+    
+    while(getline(lbFile, currentLine)){
+        LbEntry currentEntry;
 
-void movePlayer(vector <vector <char>>& map, char move, Player &P){
-    int direction[2];
-
-    if (move == 'e' || move == 'd' || move == 'c') direction[0] = 1;
-    else if (move == 'q' || move == 'a' || move == 'z') direction[0] = -1;
-    else direction[0] = 0;
-
-    if (move == 'z' || move == 'x' || move == 'c') direction[1] = 1;
-    else if (move == 'q' || move == 'w' || move == 'e') direction[1] = -1;
-    else direction[1] = 0;
-}
-
-
-void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P){
-    char temp;
-    int direction[2];
-    for (int i = 0; i < robots.size(); i++){
-        if (!robots[i].alive){
-            continue; //skip iteration if robot is dead
-        }
-        if (map[robots[i].y][robots[i].x] == 'r'){
-            robots[i].alive = false;
-            continue;
-        }
-
-        if(robots[i].x < P.x) direction[0] = 1;        // define direction on x axis
-        else if (robots[i].x > P.x) direction[0] = -1;
-        else direction[0] = 0;
-
-        if(robots[i].y < P.y) direction[1] = 1;        // define direction on y axis
-        else if (robots[i].y > P.y) direction[1] = -1;
-        else direction[1] = 0;
-
-        map[robots[i].y][robots[i].x] = ' ';
+        currentEntry.name = currentLine.substr(0,15);
+        currentEntry.time = stoi(currentLine.substr(17,string::npos - 1));
         
-        robots[i].x += direction[0];
-        robots[i].y += direction[1];
         
+        entries.push_back(currentEntry);
+    }
+    lbFile.close();
 
-        temp = map[robots[i].y][robots[i].x];
 
-        if (temp == ' ') map[robots[i].y][robots[i].x] = 'R';
-        else if (temp == '*' || temp == 'R' || temp == 'r'){
-            map[robots[i].y][robots[i].x] = 'r';
-            robots[i].alive = false;
-        }
-        else{
-            map[robots[i].y][robots[i].x] = 'h';
-            P.alive = false;
-            return;
-        }
+}
+
+bool compare(LbEntry i1, LbEntry i2){
+        return (i1.time < i2.time);
+    }
+
+void organizeLeaderboard(string lbPath, vector <LbEntry> &entries){
+    readEntries(lbPath, entries);
+    ofstream lbFile(lbPath);
+    lbFile << "Player          - Time" << endl << "----------------------" << endl;
+
+    //function used to compare times, used for sorting
+    sort(entries.begin(), entries.end(), compare);
+    for(int i = 0; i < entries.size(); i++) {
+        cout << entries[i].name << " " << entries[i].time << endl;
+    }
+    for(int i = 0; i < entries.size(); i++) {
+        lbFile << entries[i].name << "- " << entries[i].time << endl;
     }
 }
 
-bool allRobotsDead(vector <Robot> &robots){
-    for (int i = 0; i < robots.size(); i++){
-        if (robots[i].alive == true) return false;
-    }
-    return true;
-}
+
+
 
