@@ -1,9 +1,9 @@
 // T04_G02
 #include <iostream>
-#include <algorithm> // used for vector sorting
+#include <algorithm> // used to call std::sort
 #include <iomanip>
 #include <chrono>  // used to handle time
-#include <fstream>  // used for file handling
+#include <fstream>  // used to handle files
 #include <vector>
 #include "gamestructs.hpp"  // contains structs created for the game
 using namespace std;
@@ -32,7 +32,7 @@ int main() {
 
     bool programExecuting = true;
     
-    while(programExecuting){  // infinite loop to keep the program running until the user wants to stop
+    while(programExecuting){  // "infinite" loop to keep the program running until the user wants to stop
         int menuOption;
         menu();
         cin >> menuOption;
@@ -45,6 +45,7 @@ int main() {
             cin.ignore(1);
             menuOption = safeNumber;
         }
+        
 
         switch(menuOption){  // selects menu option
             case 0:                                                     // Exit (program shuts down)
@@ -106,7 +107,7 @@ void rules(bool &programExecuting){  // function to display rules
          << "\n- Other user input is only considered until the first space ('01', '01  ' and '01  5' are all considered by the program as '01')"
          << "\nPress any character when you're ready to leave -> ";
     cin >> exitRules;  // wait for user input to return to menu
-    if (cin.eof())     // more CTRL-Z CTRL-D stuff
+    if (cin.eof())     // more CTRL-Z/CTRL-D 
         programExecuting = false;
 
 }
@@ -166,14 +167,14 @@ void play(bool &programExecuting){  // function to play the game
             updateLeaderboard(mapNumber, chrono::duration_cast<chrono::seconds>(gameEnd - gameStart).count(), run, programExecuting); 
             break;
         }
-        checkMove(moveOption, move, P, mapHeight, mapWidth);
 
+        checkMove(moveOption, move, P, mapHeight, mapWidth);  // check if the move chosen by the user is valid before sending it to the moving functions
         if (cin.eof()){
             programExecuting = false;
             break;
         }
-        movePlayer(map, move, P);
-        moveRobots(map, robots, P); // move robots towards player
+        movePlayer(map, move, P);  // move player according to input
+        moveRobots(map, robots, P);  // move robots towards player
     }
 
     mapFile.close();  // close file at end
@@ -192,7 +193,7 @@ void getMapSize(ifstream &mapFile, int &height, int &width){  // function to get
     width = stoi(firstLine.substr( pos + 3, string::npos ));
 }
 
-void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vector <Robot> &robots){  // function to read map from file to vector and get information on player/robots
+void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vector <Robot> &robots){  // function to read map from file to vector (readInfo() executed inside)
     int i = 0;
     string currentLine = "";
     int robotId = 1;  // this variable will correspond to a robot's id, when a robot is found (will be incremented when that happens)
@@ -335,7 +336,7 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
     string leaderboardFile = "MAZE_" + number + "_WINNERS.txt";  // file name for leaderboard created from file number
     string playerName;
     bool emptyName = true;
-    vector <LbEntry> entries;
+    vector <LbEntry> entries;  // vector to store leaderboard entries
 
     // create leaderboard file if it doesn't exist yet
     if (!fileExists(leaderboardFile)){
@@ -399,23 +400,23 @@ void readEntries(string lbPath, vector <LbEntry> &entries){
 
 }
 
-bool compare(LbEntry i1, LbEntry i2){
+bool compare(LbEntry i1, LbEntry i2){  // function to compare leaderboard times (to be used with std::sort)
         return (i1.time < i2.time);
     }
 
 void organizeLeaderboard(string lbPath, vector <LbEntry> &entries){
-    readEntries(lbPath, entries);
+    readEntries(lbPath, entries);  // read all entries
     ofstream lbFile(lbPath);
-    lbFile << "Player          - Time" << endl << "----------------------" << endl;
+    lbFile << "Player          - Time" << endl << "----------------------" << endl;  // write the first 2 lines back to file
 
-    //function used to compare times, used for sorting
-    sort(entries.begin(), entries.end(), compare);
+    sort(entries.begin(), entries.end(), compare);  // sort entries vector by time
     for(int i = 0; i < entries.size(); i++) {
         cout << entries[i].name << " " << entries[i].time << endl;
     }
     for(int i = 0; i < entries.size(); i++) {
         lbFile << entries[i].name << "- " << entries[i].time << endl;
     }
+    lbFile.close();
 }
 
 
