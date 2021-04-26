@@ -6,6 +6,7 @@
 #include <fstream>  // used to handle files
 #include <vector>
 #include "gamestructs.hpp"  // contains structs created for the game
+#include <limits>
 using namespace std;
 
 // declaring functions
@@ -19,13 +20,13 @@ void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vec
 void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots, int &id);
 void printMap(vector <vector <char>> map);
 void checkMove(string moveOption, char &move, Player &P, int height, int width);
-void movePlayer(vector <vector <char>>& map, char move, Player &P);
+void movePlayer(vector <vector <char>>& map, const char move, Player &P);
 void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P);
-bool allRobotsDead(vector <Robot> &robots);
+bool allRobotsDead(const vector <Robot> &robots);
 void updateLeaderboard(string number, int time, bool &run, bool &programExecuting);
 void organizeLeaderboard(string lbPath, vector <LbEntry> &entries);
 void readEntries(string lbPath, vector <LbEntry> &entries);
-bool compare(LbEntry i1, LbEntry i2);
+bool compare(const LbEntry i1, const LbEntry i2);
 
 
 int main() {
@@ -39,21 +40,19 @@ int main() {
         if (cin.eof()){  // closes program with CTRL-Z (Windows) or CTRL-D (Linux)
             break;
         }
-        if (cin.fail()){  // checks for input type errors and sets menuOption to a "safe" invalid value
+        if (cin.fail()){
             const int safeNumber = 3;
             cin.clear();
-            cin.ignore(1);
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             menuOption = safeNumber;
         }
-        
-
         switch(menuOption){  // selects menu option
             case 0:                                                     // Exit (program shuts down)
                 programExecuting = false;
                 cout << "Thanks for playing";
                 break;
-            case 1:                                                     // Rules (displays the rules of the game)
-                rules(programExecuting);
+            case 1:                                              
+                rules(programExecuting);                                // Rules (displays the rules of the game)
                 break;
             case 2:                                                     // Play (starts game)
                 play(programExecuting);
@@ -85,7 +84,8 @@ void editInput(string &input){  // function to edit the user input, only conside
 }
 
 void rules(bool &programExecuting){  // function to display rules
-    char exitRules;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    string exitRules;
     cout << "\nRULES\n\nYou can exit the game at any time with CTRL-Z (Windows) or CTRL-D (Linux)"
          << "\nSymbols:"
          << "\n- * = electrical fence or post;"
@@ -104,9 +104,9 @@ void rules(bool &programExecuting){  // function to display rules
          << "\n- When several robots collide, they get stuck and they are all represented by a single symbol, an 'r'."
          << "\n- When a robot collides with other destroyed robots ('r' cells) it also gets stuck."
          << "\n- If a robot collides with fences/posts it dies, being also represented by an 'r', and the fence/post cell at the position of the collision loses its capability to electrocute."
-         << "\n- Other user input is only considered until the first space ('01', '01  ' and '01  5' are all considered by the program as '01')"
+         << "\n- Some other user input may be neglected to avoid issues (for example when reading file name, '01', '01  ' and '01  5' are all considered by the program as '01')"
          << "\nPress any character when you're ready to leave -> ";
-    cin >> exitRules;  // wait for user input to return to menu
+    getline(cin, exitRules);  // wait for user input to return to menu
     if (cin.eof())     // more CTRL-Z/CTRL-D 
         programExecuting = false;
 
@@ -122,7 +122,7 @@ void play(bool &programExecuting){  // function to play the game
     vector <Robot> robots;  // vector that will contain robots as Robot structs
 
     // run loop until a existing file is found
-    cin.ignore(1);  // cleans input allowing getline() to wait for input when first reading map number
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');  // cleans input allowing getline() to wait for input when first reading map number
     while(noFile){ 
         cout << "\nSelect which map you would like to play (ex. 01, 02, ..., 99) or 0 to go back to the menu: " << endl;    
         getline(cin, mapNumber);
@@ -262,7 +262,7 @@ void checkMove(string moveOption, char &move, Player &P, int height, int width){
         }
 }
 
-void movePlayer(vector <vector <char>>& map, char move, Player &P){
+void movePlayer(vector <vector <char>>& map, const char move, Player &P){
     int direction[2];
     char temp;
 
@@ -274,6 +274,7 @@ void movePlayer(vector <vector <char>>& map, char move, Player &P){
     else if (move == 'q' || move == 'w' || move == 'e') direction[1] = -1;
     else direction[1] = 0;
 
+    
     map[P.y][P.x] = ' ';
     P.x += direction[0];
     P.y += direction[1];
@@ -325,7 +326,7 @@ void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P){
     }
 }
 
-bool allRobotsDead(vector <Robot> &robots){
+bool allRobotsDead(const vector <Robot> &robots){
     for (int i = 0; i < robots.size(); i++){
         if (robots[i].alive == true) return false;
     }
@@ -381,6 +382,7 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
 void readEntries(string lbPath, vector <LbEntry> &entries){
     ifstream lbFile(lbPath);   //open leaderboard file for reading
     string currentLine;
+    const int nameLength = 17;
     
     //skip first 2 lines
     getline(lbFile, currentLine);
@@ -389,8 +391,8 @@ void readEntries(string lbPath, vector <LbEntry> &entries){
     while(getline(lbFile, currentLine)){
         LbEntry currentEntry;
 
-        currentEntry.name = currentLine.substr(0,15);
-        currentEntry.time = stoi(currentLine.substr(17,string::npos - 1));
+        currentEntry.name = currentLine.substr(0, nameLength);
+        currentEntry.time = stoi(currentLine.substr(nameLength, string::npos - 1));
         
         
         entries.push_back(currentEntry);
@@ -400,7 +402,7 @@ void readEntries(string lbPath, vector <LbEntry> &entries){
 
 }
 
-bool compare(LbEntry i1, LbEntry i2){  // function to compare leaderboard times (to be used with std::sort)
+bool compare(const LbEntry i1, const LbEntry i2){  // function to compare leaderboard times (to be used with std::sort)
         return (i1.time < i2.time);
     }
 
