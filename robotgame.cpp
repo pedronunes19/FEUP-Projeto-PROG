@@ -24,7 +24,7 @@ void movePlayer(vector <vector <char>>& map, const char move, Player &P);
 void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P);
 bool allRobotsDead(const vector <Robot> &robots);
 void updateLeaderboard(string number, int time, bool &run, bool &programExecuting);
-void organizeLeaderboard(string lbPath, vector <LbEntry> &entries);
+void organizeLeaderboard(string lbPath);
 void readEntries(string lbPath, vector <LbEntry> &entries);
 bool compare(const LbEntry i1, const LbEntry i2);
 
@@ -337,7 +337,6 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
     string leaderboardFile = "MAZE_" + number + "_WINNERS.txt";  // file name for leaderboard created from file number
     string playerName;
     bool emptyName = true;
-    vector <LbEntry> entries;  // vector to store leaderboard entries
 
     // create leaderboard file if it doesn't exist yet
     if (!fileExists(leaderboardFile)){
@@ -375,7 +374,7 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
     leaderboard.close();
 
     // organize leaderboard
-    organizeLeaderboard(leaderboardFile, entries);
+    organizeLeaderboard(leaderboardFile);
     
 }
 
@@ -406,7 +405,8 @@ bool compare(const LbEntry i1, const LbEntry i2){  // function to compare leader
         return (i1.time < i2.time);
     }
 
-void organizeLeaderboard(string lbPath, vector <LbEntry> &entries){
+void organizeLeaderboard(string lbPath){
+    vector <LbEntry> entries;  // vector to store leaderboard entries
     readEntries(lbPath, entries);  // read all entries
     ofstream lbFile(lbPath);
     lbFile << "Player          - Time" << endl << "----------------------" << endl;  // write the first 2 lines back to file
