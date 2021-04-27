@@ -291,8 +291,11 @@ void movePlayer(vector <vector <char>>& map, const char move, Player &P){
 void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P){
     char temp;
     int direction[2];
+    if (!P.alive)
+        return;
 
     for (int i = 0; i < robots.size(); i++){
+        
         if (!robots[i].alive){
             continue; //skip iteration if robot is dead
         }
