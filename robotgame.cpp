@@ -319,9 +319,6 @@ void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P){
             map[robots[i].y][robots[i].x] = 'r';
             robots[i].alive = false;
         }
-        else if (temp == 'h'){
-            map[robots[i].y][robots[i].x] = 'h';
-        }
         else{
             map[robots[i].y][robots[i].x] = 'h';
             P.alive = false;
