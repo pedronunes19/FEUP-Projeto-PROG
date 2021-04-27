@@ -385,7 +385,7 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
 void readEntries(string lbPath, vector <LbEntry> &entries){
     ifstream lbFile(lbPath);   //open leaderboard file for reading
     string currentLine;
-    const int nameLength = 17;
+    const int nameLength = 18;
     
     //skip first 2 lines
     getline(lbFile, currentLine);
@@ -395,6 +395,7 @@ void readEntries(string lbPath, vector <LbEntry> &entries){
         LbEntry currentEntry;
 
         currentEntry.name = currentLine.substr(0, nameLength);
+        
         currentEntry.time = stoi(currentLine.substr(nameLength, string::npos - 1));
         
         
@@ -420,7 +421,7 @@ void organizeLeaderboard(string lbPath){
         cout << entries[i].name << " " << entries[i].time << endl;
     }
     for(int i = 0; i < entries.size(); i++) {
-        lbFile << entries[i].name << "- " << entries[i].time << endl;
+        lbFile << entries[i].name << entries[i].time << endl;
     }
     lbFile.close();
 }

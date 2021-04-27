@@ -1,5 +1,4 @@
 Player          - Time
 ----------------------
-fvetwvftr      - 0
-faregfer       - 3
-ewcwrc         - 6
+s               - 0
+s               - 1
