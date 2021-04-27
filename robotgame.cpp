@@ -19,7 +19,7 @@ void getMapSize(ifstream &mapFile, int &height, int &width);
 void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vector <Robot> &robots);
 void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots, int &id);
 void printMap(vector <vector <char>> map);
-void checkMove(string moveOption, char &move, Player &P, int height, int width);
+void checkMove(char &move, Player &P, int height, int width);
 void movePlayer(vector <vector <char>>& map, const char move, Player &P);
 void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P);
 bool allRobotsDead(const vector <Robot> &robots);
@@ -154,7 +154,6 @@ void play(bool &programExecuting){  // function to play the game
 
 
     while(run){
-        string moveOption;
         char move;
         printMap(map);  // print current state of map
         if (!P.alive){  // end the game if the player loses
@@ -168,7 +167,7 @@ void play(bool &programExecuting){  // function to play the game
             break;
         }
 
-        checkMove(moveOption, move, P, mapHeight, mapWidth);  // check if the move chosen by the user is valid before sending it to the moving functions
+        checkMove(move, P, mapHeight, mapWidth);  // check if the move chosen by the user is valid before sending it to the moving functions
         if (cin.eof()){
             programExecuting = false;
             break;
@@ -241,7 +240,8 @@ void printMap(vector <vector <char>> map){  //  function to print the map from m
 
 
 
-void checkMove(string moveOption, char &move, Player &P, int height, int width){  // function to check if the player's move is valid
+void checkMove(char &move, Player &P, int height, int width){  // function to check if the player's move is valid
+    string moveOption;
     bool valid = false;
     bool limitLeft = (P.x == 1), limitRight = (P.x == width - 2), limitUp = (P.y == 1), limitDown = (P.y == height - 2);
     while(!valid){
