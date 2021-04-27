@@ -1,6 +1,7 @@
 Player          - Time
 ----------------------
-asdasd         - 10
-ola2           - 15
-ola3           - 18
-Ola            - 26
+asdasd         - - 10
+ola2           - - 15
+ola3           - - 18
+Ola            - - 26
+teste           -- 36
