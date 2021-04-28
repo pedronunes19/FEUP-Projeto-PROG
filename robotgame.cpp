@@ -6,7 +6,7 @@
 #include <fstream>  // used to handle files
 #include <vector>
 #include "gamestructs.hpp"  // contains structs created for the game
-#include <limits>
+#include <limits>  // used with cin.ignore()
 using namespace std;
 
 // declaring functions
@@ -18,9 +18,8 @@ bool fileExists(string fileName);
 void getMapSize(ifstream &mapFile, int &height, int &width);
 void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vector <Robot> &robots);
 void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots, int &id);
-void printMap(vector <vector <char>> map);
-void checkMove(char &move, Player &P, int height, int width);
-void movePlayer(vector <vector <char>>& map, const char move, Player &P);
+void printMap(const vector <vector <char>> map);
+void movePlayer(vector <vector <char>>& map, Player &P);
 void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P);
 bool allRobotsDead(const vector <Robot> &robots);
 void updateLeaderboard(string number, int time, bool &run, bool &programExecuting);
@@ -30,7 +29,6 @@ bool compare(const LbEntry i1, const LbEntry i2);
 
 
 int main() {
-
     bool programExecuting = true;
     
     while(programExecuting){  // "infinite" loop to keep the program running until the user wants to stop
@@ -43,9 +41,9 @@ int main() {
         if (cin.fail()){
             const int safeNumber = 3;
             cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             menuOption = safeNumber;
         }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');  // remove the rest of the line from input buffer
         switch(menuOption){  // selects menu option
             case 0:                                                     // Exit (program shuts down)
                 programExecuting = false;
@@ -59,10 +57,7 @@ int main() {
                 break;
             default:                                                    // in case no valid option is selected
                 cout << "\nPlease choose a valid option" << endl;
-
-
-        }
-        
+        }   
     }
     return 0;
 }
@@ -84,7 +79,6 @@ void editInput(string &input){  // function to edit the user input, only conside
 }
 
 void rules(bool &programExecuting){  // function to display rules
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     string exitRules;
     cout << "\nRULES\n\nYou can exit the game at any time with CTRL-Z (Windows) or CTRL-D (Linux)"
          << "\nSymbols:"
@@ -97,19 +91,19 @@ void rules(bool &programExecuting){  // function to display rules
          << "\n    A            player           D"
          << "\n    Z              X              C"
          << "\n- The player has the option to stay in his/her current position by typing 'S'."
-         << "\n- The program reads only the first character when typing the movement"
          << "\n- The player can't move to cells occupied by destroyed robots"
          << "\n- Each robot can move to one of the 8 neighbour cells of its current cell, as the player."
          << "\nOther important info:"
          << "\n- When several robots collide, they get stuck and they are all represented by a single symbol, an 'r'."
          << "\n- When a robot collides with other destroyed robots ('r' cells) it also gets stuck."
          << "\n- If a robot collides with fences/posts it dies, being also represented by an 'r', and the fence/post cell at the position of the collision loses its capability to electrocute."
-         << "\n- Some other user input may be neglected to avoid issues (for example when reading file name, '01', '01  ' and '01  5' are all considered by the program as '01')"
+         << "\nInput:"
+         << "\n- The program reads only the first character when typing the movement or the menu option"
+         << "\n- When reading map number some user input may be neglected to avoid issues (for example when reading file name, '01', '01  ' and '01  5' are all considered by the program as '01')"
          << "\nPress any character when you're ready to leave -> ";
     getline(cin, exitRules);  // wait for user input to return to menu
     if (cin.eof())     // more CTRL-Z/CTRL-D 
         programExecuting = false;
-
 }
 
 void play(bool &programExecuting){  // function to play the game
@@ -122,7 +116,6 @@ void play(bool &programExecuting){  // function to play the game
     vector <Robot> robots;  // vector that will contain robots as Robot structs
 
     // run loop until a existing file is found
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');  // cleans input allowing getline() to wait for input when first reading map number
     while(noFile){ 
         cout << "\nSelect which map you would like to play (ex. 01, 02, ..., 99) or 0 to go back to the menu: " << endl;    
         getline(cin, mapNumber);
@@ -152,9 +145,7 @@ void play(bool &programExecuting){  // function to play the game
     // starts clock to count gametime
     auto gameStart = chrono::steady_clock::now();
 
-
     while(run){
-        char move;
         printMap(map);  // print current state of map
         if (!P.alive){  // end the game if the player loses
             cout << "You lost" << endl;
@@ -166,13 +157,14 @@ void play(bool &programExecuting){  // function to play the game
             updateLeaderboard(mapNumber, chrono::duration_cast<chrono::seconds>(gameEnd - gameStart).count(), run, programExecuting); 
             break;
         }
-
-        checkMove(move, P, mapHeight, mapWidth);  // check if the move chosen by the user is valid before sending it to the moving functions
+        
+        movePlayer(map, P);  // move player according to input
+        
+        // stop program (CTRL+Z)
         if (cin.eof()){
             programExecuting = false;
             break;
         }
-        movePlayer(map, move, P);  // move player according to input
         moveRobots(map, robots, P);  // move robots towards player
     }
 
@@ -205,29 +197,28 @@ void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vec
         }
         map.push_back(temp);
         i++;
-    }
-    
+    } 
 }
 
 void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots, int &id){  // function to read a character and get important information
-            switch(aux){
-                case 'H':               // info of player
-                    P.x = x;
-                    P.y = y;
-                    P.alive = true;
-                    break;
-                case 'R':               // info of robot
-                    robots.push_back(Robot());
-                    int last = robots.size() - 1;
-                    robots[last].x = x;
-                    robots[last].y = y;
-                    robots[last].id = id;
-                    robots[last].alive = true;
-                    id++;
-            }    
+    switch(aux){
+        case 'H':               // info of player
+            P.x = x;
+            P.y = y;
+            P.alive = true;
+            break;
+        case 'R':               // info of robot
+            robots.push_back(Robot());
+            int last = robots.size() - 1;
+            robots[last].x = x;
+            robots[last].y = y;
+            robots[last].id = id;
+            robots[last].alive = true;
+            id++;
+    }    
 }
 
-void printMap(vector <vector <char>> map){  //  function to print the map from map vector
+void printMap(const vector <vector <char>> map){  //  function to print the map from map vector
     for (int i = 0; i < map.size(); i++){
         for (int j = 0; j < map[i].size(); j++){
             cout << map.at(i).at(j);
@@ -236,45 +227,43 @@ void printMap(vector <vector <char>> map){  //  function to print the map from m
     }
 }
 
-
-
-
-
-void checkMove(char &move, Player &P, int height, int width){  // function to check if the player's move is valid
-    string moveOption;
-    bool valid = false;
-    bool limitLeft = (P.x == 1), limitRight = (P.x == width - 2), limitUp = (P.y == 1), limitDown = (P.y == height - 2);
-    while(!valid){
-            getline(cin, moveOption);
-            if (cin.eof())
-                break;
-            editInput(moveOption);
-            move = tolower(moveOption[0]);
-            if (move == 's')  
-                valid = true;
-            else if ((move == 'a' && !limitLeft) || (move == 'd' && !limitRight) || (move == 'w' && !limitUp) || (move == 'x' && !limitDown))  // verify simple diretional moves
-                valid = true;
-            else if ((((move == 'q' && !limitLeft) || (move == 'e' && !limitRight)) && !limitUp) || (((move == 'z' && !limitLeft) || (move == 'c' && !limitRight)) && !limitDown))
-                valid = true;
-            else
-                cout << "Invalid move" << endl;
-            
-        }
-}
-
-void movePlayer(vector <vector <char>>& map, const char move, Player &P){
+void movePlayer(vector <vector <char>>& map, Player &P){
     int direction[2];
-    char temp;
+    char temp, move;
+    const string validmoves = "qweasdzxc";
+    string moveOption;
+    bool valid;
 
-    if (move == 'e' || move == 'd' || move == 'c') direction[0] = 1;
-    else if (move == 'q' || move == 'a' || move == 'z') direction[0] = -1;
-    else direction[0] = 0;
+    do{
+        valid = true;
+        cout << "Move -> ";
+        cin >> move;
+        if (cin.eof())  // CTRL-Z/CTRL-D
+            return;
+        if (cin.fail()){  // staying as a safety measure
+            cin.clear();
+            valid = false;
+            cout << "Invalid move, choose another direction" << endl;
+        }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');  // remove the rest of the line from input buffer
+        move = tolower(move);
+        
+        //get direction
+        if (move == 'e' || move == 'd' || move == 'c') direction[0] = 1;
+        else if (move == 'q' || move == 'a' || move == 'z') direction[0] = -1;
+        else direction[0] = 0;
 
-    if (move == 'z' || move == 'x' || move == 'c') direction[1] = 1;
-    else if (move == 'q' || move == 'w' || move == 'e') direction[1] = -1;
-    else direction[1] = 0;
+        if (move == 'z' || move == 'x' || move == 'c') direction[1] = 1;
+        else if (move == 'q' || move == 'w' || move == 'e') direction[1] = -1;
+        else direction[1] = 0;
 
-    
+        if(map[P.y + direction[1]][P.x + direction[0]] == 'r' || validmoves.find(move) == string::npos){ //Check if new position is occupied by a dead robot or if the character that specifies the direction is valid
+            valid = false;
+            cout << "Invalid move, choose another direction" << endl;
+        }
+
+    } while(!valid);
+
     map[P.y][P.x] = ' ';
     P.x += direction[0];
     P.y += direction[1];
@@ -291,10 +280,10 @@ void movePlayer(vector <vector <char>>& map, const char move, Player &P){
 void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P){
     char temp;
     int direction[2];
-    if (!P.alive)
-        return;
 
     for (int i = 0; i < robots.size(); i++){
+        if (!P.alive)
+            return;
         
         if (!robots[i].alive){
             continue; //skip iteration if robot is dead
@@ -342,7 +331,7 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
     string playerName;
     bool emptyName = true;
 
-    // create leaderboard file if it doesn't exist yet
+    // create leaderboard file if it doesn't already exist
     if (!fileExists(leaderboardFile)){
         ofstream leaderboard(leaderboardFile);
         leaderboard << "Player          - Time" << endl << "----------------------" << endl;
@@ -379,31 +368,26 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
 
     // organize leaderboard
     organizeLeaderboard(leaderboardFile);
-    
 }
 
 void readEntries(string lbPath, vector <LbEntry> &entries){
-    ifstream lbFile(lbPath);   //open leaderboard file for reading
+    ifstream lbFile(lbPath);   // open leaderboard file for reading
     string currentLine;
     const int nameLength = 18;
     
-    //skip first 2 lines
-    getline(lbFile, currentLine);
-    getline(lbFile, currentLine);
+    // skip first 2 lines
+    lbFile.ignore(numeric_limits<streamsize>::max(), '\n');
+    lbFile.ignore(numeric_limits<streamsize>::max(), '\n');
     
     while(getline(lbFile, currentLine)){
         LbEntry currentEntry;
 
+        // store entries
         currentEntry.name = currentLine.substr(0, nameLength);
-        
         currentEntry.time = stoi(currentLine.substr(nameLength, string::npos - 1));
-        
-        
         entries.push_back(currentEntry);
     }
     lbFile.close();
-
-
 }
 
 bool compare(const LbEntry i1, const LbEntry i2){  // function to compare leaderboard times (to be used with std::sort)
@@ -418,14 +402,7 @@ void organizeLeaderboard(string lbPath){
 
     sort(entries.begin(), entries.end(), compare);  // sort entries vector by time
     for(int i = 0; i < entries.size(); i++) {
-        cout << entries[i].name << " " << entries[i].time << endl;
-    }
-    for(int i = 0; i < entries.size(); i++) {
         lbFile << entries[i].name << entries[i].time << endl;
     }
     lbFile.close();
 }
-
-
-
-
