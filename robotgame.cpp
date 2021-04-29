@@ -221,7 +221,7 @@ void printMap(const vector <vector <char>> map){  //  function to print the map 
 void movePlayer(vector <vector <char>>& map, Player &P){  // function to do everything related to moving the player
     int direction[2];
     char temp, move;
-    const string VALIDMOVES = "qweasdzxc";
+    const string VALIDMOVES = "qweasdzxc";  // string containing every char correponding to a valid move
     string moveOption;
     bool valid;
 
@@ -237,18 +237,17 @@ void movePlayer(vector <vector <char>>& map, Player &P){  // function to do ever
             cout << "Invalid move, choose another direction" << endl;
         }
         cin.ignore(numeric_limits<streamsize>::max(), '\n');  // remove the rest of the line from input buffer
-        move = tolower(move);
+        move = tolower(move);  // avoid case sensitivity
         
-        // get direction
-        if (move == 'e' || move == 'd' || move == 'c') direction[0] = 1;
+        if (move == 'e' || move == 'd' || move == 'c') direction[0] = 1;        // define direction on x axis
         else if (move == 'q' || move == 'a' || move == 'z') direction[0] = -1;
         else direction[0] = 0;
 
-        if (move == 'z' || move == 'x' || move == 'c') direction[1] = 1;
+        if (move == 'z' || move == 'x' || move == 'c') direction[1] = 1;        // define direction on y axis
         else if (move == 'q' || move == 'w' || move == 'e') direction[1] = -1;
         else direction[1] = 0;
 
-        if(map[P.y + direction[1]][P.x + direction[0]] == 'r' || VALIDMOVES.find(move) == string::npos){ //Check if new position is occupied by a dead robot or if the character that specifies the direction is valid
+        if(map[P.y + direction[1]][P.x + direction[0]] == 'r' || VALIDMOVES.find(move) == string::npos){  //Check if new position is occupied by a dead robot or if the character that specifies the direction is valid
             valid = false;
             cout << "Invalid move, choose another direction" << endl;
         }
@@ -260,15 +259,15 @@ void movePlayer(vector <vector <char>>& map, Player &P){  // function to do ever
     P.y += direction[1];
     temp = map[P.y][P.x];
 
-    if (temp == ' ') map[P.y][P.x] = 'H';
+    if (temp == ' ') map[P.y][P.x] = 'H';  // regular move
     else {
-        map[P.y][P.x] = 'h';
+        map[P.y][P.x] = 'h';  // player dies
         P.alive = false;
     }
 }
 
 
-void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P){  // function to move robots according 
+void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P){  // function to move robots according to player position
     char temp;
     int direction[2];
 
@@ -276,10 +275,10 @@ void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P){
         if (!P.alive)
             return;
         
-        if (!robots[i].alive){
-            continue; //skip iteration if robot is dead
+        if (!robots[i].alive){  //skip iteration if robot is dead
+            continue; 
         }
-        if (map[robots[i].y][robots[i].x] == 'r'){
+        if (map[robots[i].y][robots[i].x] == 'r'){  //skip iteration if robot gets "hit" by any robot that previously moved
             robots[i].alive = false;
             continue;
         }
@@ -297,20 +296,20 @@ void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P){
         robots[i].y += direction[1];
         temp = map[robots[i].y][robots[i].x];
 
-        if (temp == ' ') map[robots[i].y][robots[i].x] = 'R'; 
-        else if (temp == '*' || temp == 'R' || temp == 'r'){
+        if (temp == ' ') map[robots[i].y][robots[i].x] = 'R';  // regular move
+        else if (temp == '*' || temp == 'R' || temp == 'r'){  // robot gets stuck/dead
             map[robots[i].y][robots[i].x] = 'r';
             robots[i].alive = false;
         }
         else{
-            map[robots[i].y][robots[i].x] = 'h';
+            map[robots[i].y][robots[i].x] = 'h';  // robot kills player
             P.alive = false;
             return;
         }
     }
 }
 
-bool allRobotsDead(const vector <Robot> &robots){
+bool allRobotsDead(const vector <Robot> &robots){  // function to check if there is any functional robot
     for (int i = 0; i < robots.size(); i++){
         if (robots[i].alive == true) return false;
     }
@@ -362,7 +361,7 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
     organizeLeaderboard(leaderboardFile);
 }
 
-void readEntries(string lbPath, vector <LbEntry> &entries){
+void readEntries(string lbPath, vector <LbEntry> &entries){  // function to read leaderboard entries (name, time)
     ifstream lbFile(lbPath);   // open leaderboard file for reading
     string currentLine;
     const int NAMELENGTH = 18;
@@ -386,7 +385,7 @@ bool compare(const LbEntry i1, const LbEntry i2){  // function to compare leader
         return (i1.time < i2.time);
     }
 
-void organizeLeaderboard(string lbPath){
+void organizeLeaderboard(string lbPath){  // function to organize (sort) the leaderboard
     vector <LbEntry> entries;  // vector to store leaderboard entries
     readEntries(lbPath, entries);  // read all entries
     ofstream lbFile(lbPath);
