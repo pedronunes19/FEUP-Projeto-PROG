@@ -1,5 +1,5 @@
 // T04_G02
-// header file containing structs for game "characters"
+// header file containing structs for game "characters" + leaderboard entries
 
 struct Player{
     // coordinates
@@ -19,14 +19,17 @@ struct Robot{
     // status
     bool alive;
 
-    // moving order (mostly a formality)
+    // moving order id (mostly a formality)
     int id;
     
 };
 
-struct LbEntry{ //struct used for leaderboard entries
+struct LbEntry{ 
 
+    // player name
     std::string name;
+
+    // score (time played)
     int time;
 
 };
