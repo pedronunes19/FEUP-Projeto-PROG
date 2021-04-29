@@ -255,7 +255,7 @@ void movePlayer(vector <vector <char>>& map, Player &P){  // function to do ever
 
     }while(!valid);
 
-    map[P.y][P.x] = ' ';
+    map[P.y][P.x] = ' ';  // previous position filled with empty space
     P.x += direction[0];
     P.y += direction[1];
     temp = map[P.y][P.x];
@@ -292,7 +292,7 @@ void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P){
         else if (robots[i].y > P.y) direction[1] = -1;
         else direction[1] = 0;
 
-        map[robots[i].y][robots[i].x] = ' ';
+        map[robots[i].y][robots[i].x] = ' ';  // previous position filled with empty space
         robots[i].x += direction[0];
         robots[i].y += direction[1];
         temp = map[robots[i].y][robots[i].x];
