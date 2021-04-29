@@ -96,6 +96,7 @@ void rules(bool &programExecuting){  // function to display rules
          << "\n- When several robots collide, they get stuck and they are all represented by a single symbol, an 'r'."
          << "\n- When a robot collides with other destroyed robots ('r' cells) it also gets stuck."
          << "\n- If a robot collides with fences/posts it dies, being also represented by an 'r', and the fence/post cell at the position of the collision loses its capability to electrocute."
+         << "\n- Time is shown in seconds"
          << "\nInput:"
          << "\n- The program reads only the first character when typing the movement or the menu option"
          << "\n- When reading map number some user input may be neglected to avoid issues (for example when reading file name, '01', '01  ' and '01  5' are all considered by the program as '01')"
@@ -166,7 +167,7 @@ void play(bool &programExecuting){  // function to play the game
         moveRobots(map, robots, P);  // move robots towards player
     }
 
-    mapFile.close();  // close file at end
+    mapFile.close();  // close file at the end of the game
 }
 
 bool fileExists(string fileName){  // function to check if a map file exists
@@ -247,7 +248,7 @@ void movePlayer(vector <vector <char>>& map, Player &P){  // function to do ever
         else if (move == 'q' || move == 'w' || move == 'e') direction[1] = -1;
         else direction[1] = 0;
 
-        if(map[P.y + direction[1]][P.x + direction[0]] == 'r' || VALIDMOVES.find(move) == string::npos){  //Check if new position is occupied by a dead robot or if the character that specifies the direction is valid
+        if(map[P.y + direction[1]][P.x + direction[0]] == 'r' || VALIDMOVES.find(move) == string::npos){  //Check if new position is occupied by a dead robot or if the character that specifies the direction is invalid
             valid = false;
             cout << "Invalid move, choose another direction" << endl;
         }
@@ -278,7 +279,7 @@ void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P){
         if (!robots[i].alive){  //skip iteration if robot is dead
             continue; 
         }
-        if (map[robots[i].y][robots[i].x] == 'r'){  //skip iteration if robot gets "hit" by any robot that previously moved
+        if (map[robots[i].y][robots[i].x] == 'r'){  //skip iteration if robot gets "hit" by any robot that previously moved to it's position
             robots[i].alive = false;
             continue;
         }
@@ -309,7 +310,7 @@ void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P){
     }
 }
 
-bool allRobotsDead(const vector <Robot> &robots){  // function to check if there is any functional robot
+bool allRobotsDead(const vector <Robot> &robots){  // function to check if there is any functional robot 
     for (int i = 0; i < robots.size(); i++){
         if (robots[i].alive == true) return false;
     }
@@ -324,7 +325,7 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
     // create leaderboard file if it doesn't already exist
     if (!fileExists(leaderboardFile)){
         ofstream leaderboard(leaderboardFile);
-        leaderboard << "Player          - Time" << endl << "----------------------" << endl;
+        leaderboard << "Player          - Time" << endl << "----------------------" << endl;  // write basic leaderboard template
         leaderboard.close();
     }
     // store the player's name
@@ -332,7 +333,7 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
     while (emptyName){
         cout << "Write your name here (max 15 characters): ";
         getline(cin, playerName);
-        if (cin.eof()){
+        if (cin.eof()){  // CTRL-Z/CTRL-D
             run = false;
             programExecuting = false;
             return;
@@ -343,7 +344,7 @@ void updateLeaderboard(string number, int time, bool &run, bool &programExecutin
             }
             else{
                 for (int i = playerName.length(); i < MAXNAMELENGTH; i++){  
-                    playerName += ' ';  // fill with spaces to fit 15 characters
+                    playerName += ' ';  // fill with spaces to fit 15 characters (fits the table better than setw())
                 }
             }
             break;
@@ -395,5 +396,5 @@ void organizeLeaderboard(string lbPath){  // function to organize (sort) the lea
     for(int i = 0; i < entries.size(); i++) {
         lbFile << entries[i].name << entries[i].time << endl;
     }
-    lbFile.close();  // close file after organizing
+    lbFile.close();  // close file after writing ordered leaderboard to file
 }
