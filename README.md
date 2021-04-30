@@ -2,7 +2,7 @@
 First PROG project: Robots Game
 
 ## To Do
-- [ ] final revision and testing
+- [x] final revision and testing
 
 
 
