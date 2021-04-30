@@ -1,4 +1,7 @@
 Player          - Time
 ----------------------
-um dois         - 18
-dasdadas        - 50
+1               - 6
+teste           - 10
+teste           - 16
+Jogador 1       - 26
+test            - 51

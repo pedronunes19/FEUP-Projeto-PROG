@@ -16,7 +16,7 @@ void rules(bool &programExecuting);
 void play(bool &programExecuting);
 bool fileExists(string fileName);
 void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vector <Robot> &robots);
-void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots, int &id);
+void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots);
 void printMap(const vector <vector <char>> map);
 void movePlayer(vector <vector <char>>& map, Player &P);
 void moveRobots(vector <vector <char>>& map, vector <Robot> &robots, Player &P);
@@ -138,7 +138,6 @@ void play(bool &programExecuting){  // function to play the game
     ifstream mapFile(mapFilePath);
     
     // build map vector and get all information needed 
-    mapFile.ignore(numeric_limits<streamsize>::max(), '\n');  // ignore the first line containing the map dimensions (will not be used)
     getMapVector(mapFile, map, P, robots); 
 
     // starts clock to count gametime
@@ -177,22 +176,22 @@ bool fileExists(string fileName){  // function to check if a map file exists
 
 
 void getMapVector(ifstream &mapFile, vector <vector <char>> &map, Player &P, vector <Robot> &robots){  // function to read map from file to vector (readInfo() executed inside)
+    mapFile.ignore(numeric_limits<streamsize>::max(), '\n');  // ignore the first line containing the map dimensions (will not be used)
     int i = 0;
-    string currentLine = "";
-    int robotId = 1;  // this variable will correspond to a robot's id, when a robot is found (will be incremented when that happens)
+    string currentLine;
     while (getline(mapFile,currentLine)){  // reads line by line
         vector <char> temp;
         for (int j = 0; j < currentLine.length(); j++) {  // read every character in the line 
             char aux = currentLine[j];
             temp.push_back(aux);  // add the caracter to the vector that contains the line
-            readInfo(j, i, aux, P, robots, robotId);  // get important information from character (if there is any)
+            readInfo(j, i, aux, P, robots);  // get important information from character (if there is any)
         }
         map.push_back(temp);  // push the vector created with the line to map 
         i++;
     } 
 }
 
-void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots, int &id){  // function to read a character and get important information
+void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots){  // function to read a character and get important information
     switch(aux){ 
         case 'H':                      // info of player
             P.x = x;
@@ -204,9 +203,7 @@ void readInfo(int x, int y, char aux, Player &P, vector <Robot> &robots, int &id
             int last = robots.size() - 1;
             robots[last].x = x;
             robots[last].y = y;
-            robots[last].id = id;
             robots[last].alive = true;
-            id++;
     }    
 }
 
@@ -226,7 +223,7 @@ void movePlayer(vector <vector <char>>& map, Player &P){  // function to do ever
     string moveOption;
     bool valid;
 
-    do{
+    do{  // to avoid calling to many functions with the same parameters input will be handled here
         valid = true;
         cout << "Move -> ";
         cin >> move;
@@ -248,7 +245,7 @@ void movePlayer(vector <vector <char>>& map, Player &P){  // function to do ever
         else if (move == 'q' || move == 'w' || move == 'e') direction[1] = -1;
         else direction[1] = 0;
 
-        if(map[P.y + direction[1]][P.x + direction[0]] == 'r' || VALIDMOVES.find(move) == string::npos){  //Check if new position is occupied by a dead robot or if the character that specifies the direction is invalid
+        if(map[P.y + direction[1]][P.x + direction[0]] == 'r' || VALIDMOVES.find(move) == string::npos){  //check if new position is occupied by a dead robot or if the character written is not a direction
             valid = false;
             cout << "Invalid move, choose another direction" << endl;
         }
