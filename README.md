@@ -1,8 +1,9 @@
 # Projeto-PROG
 First PROG project: Robots Game
+Second PROG project: Recreate Robots Game using OOP
 
 ## To Do
-- [x] final revision and testing
+- [ ] start second project
 
 
 
