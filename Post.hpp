@@ -2,10 +2,11 @@
 
 class Post{
 public:
-    Post(char ch);
+    Post(char ch, int x, int y);
     bool getState() const;
     void turnOff();
 
 private:
     bool electrified;
+    int x, y;
 };

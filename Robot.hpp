@@ -1,5 +1,4 @@
 // T04_G02
-#include "Maze.hpp"
 #include <vector>
 using namespace std;
 

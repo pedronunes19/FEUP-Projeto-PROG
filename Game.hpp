@@ -10,10 +10,7 @@
 
 class Game{
     public:
-        Game();
-        bool fileExists(std::string fileName) const;
-        std::string getMapName() const;  // handle input of map number and return map file name
-        void buildMaze();  // build maze object
+        Game(const std::string &mapName);
     private:
         Maze maze;
         Player player;

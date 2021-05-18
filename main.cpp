@@ -1,12 +1,6 @@
 // T04_G02
 
-#include "Game.hpp"
-#include "Maze.hpp"
-#include "Player.hpp"
-#include "Robot.hpp"
-
-
-
+#include "auxfunctions.hpp"
 
 int main() {
     bool programExecuting = true;
@@ -30,10 +24,10 @@ int main() {
                 cout << "Thanks for playing";
                 break;
             case 1:                                                     // Rules (displays the rules of the game)
-                // rules();                                
+                rulesOption();                                
                 break;
             case 2:                                                     // Play (starts game)
-                // play();
+                playOption();
                 break;
             default:                                                    // In case no valid option is selected
                 cout << "\nPlease choose a valid option" << endl;
@@ -42,14 +36,4 @@ int main() {
     return 0;
 }
 
-void menu(){  // function to draw menu to the screen
-    cout << "-----------------------------------------------------\n"
-         << "                     ROBOTS GAME                     \n"
-         << "                                                     \n"
-         << "                      1) Rules                       \n"
-         << "                      2) Play                        \n"
-         << "                      0) Exit                        \n"
-         << "                                                     \n"
-         << "               Select your option: ";         
-}
 

@@ -9,11 +9,17 @@
 class Maze{
     public:
         Maze();
-        void setFile(std::string name);
+        Maze(std::string mapName);
         void setDimensions(std::ifstream &map);
-        std::string getFileName();
+        void setMapVector(std::ifstream &map);
+        std::string getMapName();
+        int getHeight() const;
+        int getWidth() const;
+        char getChar(int x, int y);
+        void addPost(Post p);
     private:
-        std::string mapFile;
+        std::string mapName;
         int height, width;
+        std::vector <std::vector <char>> mapVector;
         std::vector <Post> posts;
 };

@@ -1,50 +1,35 @@
 // T04_G02
 
 #include "Game.hpp"
-#include "Maze.hpp"
-#include "Player.hpp"
-#include "Robot.hpp"
 
 using namespace std;
 
-Game::Game(){
-    // default constructor
-}
+Game::Game(const string &mapName){
+    this -> maze = Maze(mapName);  // (may not be 100% correct or well done) sets the maze with the file name
+    ifstream map(mapName);  // open stream to read everything from file
+    maze.setDimensions(map);  // store maze dimensions
+    maze.setMapVector(map);  // stores the maze in the 2d char vector
 
-bool Game::fileExists(std::string fileName) const{
-    ifstream file(fileName);
-    return file.good();  // if file exists, returns true, otherwise returns false
-}
+    // create all other objects (player, robots, posts (insert in maze), exits (to be defined))
+    for (int y = 0; y < maze.getHeight(); y++){
+        for (int x = 0; x < maze.getWidth(); x++){
+            char temp = maze.getChar(x, y);
+            if (temp == 'H'){
 
-string Game::getMapName() const {
-    string mapNumber, mapFile;
-    bool noFile = true;
-    while(noFile){
-        cout << "Select which map you would like to play (ex. 01, 02, ..., 99) or 0 to go back to the menu: " << endl;
-        cin >> mapNumber;
-        if (mapNumber == "0"){
-            return "ainda não sei o que fazer aqui mas tem de voltar ao menu";  // to be fixed
-        }
-        if (cin.eof()){  // end with CTRL-Z/CTRL-D
-            cout << "Program terminated with CTRL-Z or CTRL-D";
-            exit(1);
-        }
-        mapFile = "MAZE_" + mapNumber + ".txt";
-        if (fileExists(mapFile)){
-            return mapFile;
-        }
-        cout << "That map doesn't exist" << endl;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');  // remove the rest of the line from input buffer
+            }
+            if (temp == 'R'){
 
+            }
+            if (temp == '*' || temp == '+'){
+                Post p(temp, x, y);
+                maze.addPost(p);
+            }
+            if (temp == 'O'){
+
+            }
+        }
     }
+
 }
 
-void Game::buildMaze(){
-    string name = getMapName();
-    this -> maze.setFile(name);
-    ifstream map(maze.getFileName());
-    this -> maze.setDimensions(map);
 
-
-    map.close();  // close file after the map is built
-}
