@@ -3,13 +3,13 @@
 #include <iostream>
 #include <vector>
 #include "Maze.hpp"
-#include "Post.hpp"
+
 
 Maze::Maze(){
 
 }
 
-Maze::Maze(std::string mapName){
+void Maze::setMapName(std::string mapName){
     this -> mapName = mapName;
 }
 

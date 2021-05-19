@@ -31,7 +31,7 @@ bool fileExists(std::string fileName){
     return file.good();  // if file exists, returns true, otherwise returns false
 }
 
-string getMapName(){
+string getMapNameStart(){
     string mapNumber, mapFile;
     bool noFile = true;
     while(noFile){
@@ -60,5 +60,6 @@ string getMapName(){
 /**************************************************************************************************************/
 // PLAY FUNCTION (REFLECTS THE PLAY OPTION OF THE MENU)
 void playOption(){
-    string mapName = getMapName();
+    string mapNameInput = getMapNameStart();
+    Game robotgame(mapNameInput);
 }

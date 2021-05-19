@@ -9,7 +9,7 @@
 class Maze{
     public:
         Maze();
-        Maze(std::string mapName);
+        void setMapName(std::string mapName);
         void setDimensions(std::ifstream &map);
         void setMapVector(std::ifstream &map);
         std::string getMapName();
