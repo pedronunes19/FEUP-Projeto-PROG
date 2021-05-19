@@ -24,7 +24,7 @@ int main() {
                 cout << "Thanks for playing";
                 break;
             case 1:                                                     // Rules (displays the rules of the game)
-                rulesOption();                                
+                rulesOption(programExecuting);                                
                 break;
             case 2:                                                     // Play (starts game)
                 playOption();

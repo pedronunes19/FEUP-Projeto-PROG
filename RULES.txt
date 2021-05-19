@@ -1,0 +1,23 @@
+RULES
+
+You can exit the game at any time with CTRL-Z (Windows) or CTRL-D (Linux)
+Symbols:
+- * = electrical fence or post (electrified), + = electrical fence or post (not electrified);
+- H = player (alive); h = player (dead); the player dies when he/she collides with a fence or a post, or is captured by a robot;
+- R = robot (alive); r = robot (destroyed=dead/stuck); a dead robot is one that collided with a fence or a post; a stuck robot is one that collided with another robot (alive or destroyed)
+Movement:
+- The player can only move to one of the 8 neighbour cells of his/her current cell;
+    Q              W              E
+    A            player           D
+    Z              X              C
+- The player has the option to stay in his/her current position by typing 'S';
+- The player can't move to cells occupied by destroyed robots or not electrified posts/fences;
+- Each robot can move to one of the 8 neighbour cells of its current cell, as the player.
+Other important info:
+- When several robots collide, they get stuck and they are all represented by a single symbol, an 'r';
+- If a robot collides with fences/posts it dies, being also represented by an 'r', and the fence/post cell at the position of the collision loses its capability to electrocute;
+- Time results are shown in seconds.
+Input:
+- The program reads only the first character when typing the movement;
+- Other input is only considered up to the first blank space (for example when reading file name, '01', '01  ' and '01  5' are all considered by the program as '01').
+Press any character when you're ready to leave

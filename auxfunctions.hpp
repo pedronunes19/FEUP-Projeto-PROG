@@ -18,8 +18,16 @@ void menu(){  // function to draw menu to the screen
               << "               Select your option: ";         
 }
 
-void rulesOption(){
-
+void rulesOption(bool &programExecuting){
+    string line, exitRules;
+    ifstream rules("RULES.txt");
+    while(getline(rules, line)){
+        std::cout << line << endl;
+    }
+    rules.close();  // close stream once rules have been displayed
+    getline(cin, exitRules);  // wait for user input to return to menu
+    if (cin.eof())     // CTRL-Z/CTRL-D 
+        programExecuting = false;
 }
 /**************************************************************************************************************/
 
