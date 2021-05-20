@@ -4,6 +4,7 @@
 #include <limits>
 #include <fstream>
 #include <vector>
+#include <chrono>
 #include "Maze.hpp"
 #include "Player.hpp"
 #include "Robot.hpp"
@@ -21,8 +22,10 @@ class Game{
         bool collide(Robot& robot0, Robot& robot1); // check if two robots collided (and possibly set both as dead/stuck)
         bool collide(Post& post, Player& player); // check if human collided with post (and possibly set human as dead)
         // probably a collide with player and exit will be added
+    private:
         Maze maze;
         Player player;
         std::vector <Robot> robots;
+        int time;
 
 };

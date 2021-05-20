@@ -33,7 +33,10 @@ Game::Game(const string &mapName){
 }
 
 bool Game::play(){
+    auto gameStart = chrono::steady_clock::now();  // starts clock to count gametime
     // lots of gameplay here
+    auto gameEnd = chrono::steady_clock::now();  // time when game is over   
+    this -> time = chrono::duration_cast<chrono::seconds>(gameEnd - gameStart).count();  // full time played
 }
 
 
