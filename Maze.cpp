@@ -6,7 +6,7 @@
 
 
 Maze::Maze(){
-
+    // default constructor
 }
 
 void Maze::setMapName(std::string mapName){
@@ -27,7 +27,7 @@ std::string Maze::getMapName(){
     return mapName;
 }
 
-void Maze::setMapVector(std::ifstream &map){
+void Maze::setMapDisplay(std::ifstream &map){
     std::string currentLine;
     while (getline(map,currentLine)){  // reads line by line
         std::vector <char> temp;
@@ -35,7 +35,7 @@ void Maze::setMapVector(std::ifstream &map){
             char aux = currentLine[j];
             temp.push_back(aux);  // add the caracter to the vector that contains the line
         }
-        mapVector.push_back(temp);  // push the vector created with the line to map vector
+        mapDisplay.push_back(temp);  // push the vector created with the line to map vector
         
     }
 }
@@ -49,7 +49,7 @@ int Maze::getWidth() const{
 }
 
 char Maze::getChar(int x, int y){
-    return mapVector.at(y).at(x);
+    return mapDisplay.at(y).at(x);
 }
 
 void Maze::addPost(Post p){

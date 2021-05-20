@@ -8,7 +8,7 @@ Game::Game(const string &mapName){
     maze.setMapName(mapName);  // sets the maze with the file name for future use
     ifstream map(mapName);  // open stream to read everything from file
     maze.setDimensions(map);  // store maze dimensions
-    maze.setMapVector(map);  // stores the maze in the 2d char vector
+    maze.setMapDisplay(map);  // stores the maze in the 2d char vector
 
     // create all other objects (player, robots, posts (insert in maze), exits (to be defined))
     for (int y = 0; y < maze.getHeight(); y++){
@@ -30,6 +30,10 @@ Game::Game(const string &mapName){
         }
     }
 
+}
+
+bool Game::play(){
+    // lots of gameplay here
 }
 
 

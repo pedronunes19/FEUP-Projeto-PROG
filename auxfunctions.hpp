@@ -42,17 +42,17 @@ bool fileExists(std::string fileName){
 string getMapNameStart(){
     string mapNumber, mapFile;
     bool noFile = true;
-    while(noFile){
+    while(noFile){  // run loop until a valid file name is found
         cout << "Select which map you would like to play (ex. 01, 02, ..., 99) or 0 to go back to the menu: " << endl;
         cin >> mapNumber;
-        if (mapNumber == "0"){
+        if (mapNumber == "0"){  // go back to menu
             cout << "ainda não sei o que fazer aqui mas tem de voltar ao menu" << endl;  // to be fixed
         }
         if (cin.eof()){  // end with CTRL-Z/CTRL-D
             cout << "Program terminated with CTRL-Z or CTRL-D";
             exit(99);
         }
-        mapFile = "MAZE_" + mapNumber + ".txt";
+        mapFile = "MAZE_" + mapNumber + ".txt";  // creates file name from number chosen by user
         if (fileExists(mapFile)){
             noFile = false;
             continue;
@@ -68,6 +68,13 @@ string getMapNameStart(){
 /**************************************************************************************************************/
 // PLAY FUNCTION (REFLECTS THE PLAY OPTION OF THE MENU)
 void playOption(){
-    string mapNameInput = getMapNameStart();
-    Game robotgame(mapNameInput);
+    string mapNameInput = getMapNameStart();  // get the file name to be used for this game
+    Game robotgame(mapNameInput);  // build the Game object
+    bool gameResult = robotgame.play();  // this initilazation will run the game, and store the result (win or lost) right after
+    if (gameResult){  
+        // what happens if the player wins
+    }
+    else{
+        cout << "You lost. Try again" << endl;  // end message if player loses, after this go back to menu
+    }
 }
