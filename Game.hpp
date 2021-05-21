@@ -12,12 +12,10 @@
 class Game{
     public:
         Game(const std::string &mapName);  // build game from the map file name
-        void setObjectsFromMap(std::ifstream &map);
         bool play();  // play the game
     private:
-        void showDisplay() const;
-        // possibly a clearDisplay() to remove player and robots from maze's mapDisplay while we have their position before moving 
-        void updateDisplay();  // update the display of the maze after every full play
+        void setObjectsFromMap(std::ifstream &map);  // to be used once, at the start of each game
+        void showDisplay() const;  // no need to update display (is always up to date)
         bool collide(Robot& robot, Post& post); // check if robot collided with post (and possibly set it as dead)
         bool collide(Robot& robot, Player& player); // check if human and robot collided (and possibly set human as dead)
         bool collide(Robot& robot0, Robot& robot1); // check if two robots collided (and possibly set both as dead/stuck)

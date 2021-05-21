@@ -9,7 +9,7 @@ Game::Game(const string &mapName){
     ifstream map(mapName);  // open stream to read everything from file
     maze.setDimensions(map);  // store maze dimensions
     setObjectsFromMap(map);
-
+    map.close(); // close stream (map file won't be touched after this)
 }
 
 void Game::setObjectsFromMap(std::ifstream &map){
