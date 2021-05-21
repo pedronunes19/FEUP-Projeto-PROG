@@ -27,18 +27,6 @@ std::string Maze::getMapName(){
     return mapName;
 }
 
-void Maze::setMapDisplay(std::ifstream &map){
-    std::string currentLine;
-    while (getline(map,currentLine)){  // reads line by line
-        std::vector <char> temp;
-        for (int j = 0; j < currentLine.length(); j++) {  // read every character in the line 
-            char aux = currentLine[j];
-            temp.push_back(aux);  // add the caracter to the vector that contains the line
-        }
-        mapDisplay.push_back(temp);  // push the vector created with the line to map vector
-        
-    }
-}
 
 int Maze::getHeight() const{
     return height;
@@ -46,10 +34,6 @@ int Maze::getHeight() const{
 
 int Maze::getWidth() const{
     return width;
-}
-
-char Maze::getChar(int x, int y){
-    return mapDisplay.at(y).at(x);
 }
 
 void Maze::addPost(Post p){

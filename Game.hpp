@@ -12,6 +12,7 @@
 class Game{
     public:
         Game(const std::string &mapName);  // build game from the map file name
+        void setObjectsFromMap(std::ifstream &map);
         bool play();  // play the game
     private:
         void showDisplay() const;
@@ -20,12 +21,11 @@ class Game{
         bool collide(Robot& robot, Post& post); // check if robot collided with post (and possibly set it as dead)
         bool collide(Robot& robot, Player& player); // check if human and robot collided (and possibly set human as dead)
         bool collide(Robot& robot0, Robot& robot1); // check if two robots collided (and possibly set both as dead/stuck)
-        bool collide(Post& post, Player& player); // check if human collided with post (and possibly set human as dead)
-        // probably a collide with player and exit will be added
+        bool collide(Post& post, Player& player); // check if human collided with post (and possibly set human as dead), will be used also for testing if the player meets the exit
     private:
         Maze maze;
         Player player;
         std::vector <Robot> robots;
-        int time;
+        int timePlayed;
 
 };

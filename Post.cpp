@@ -7,7 +7,7 @@ Post::Post(char ch, int x, int y){
 }
 
 char Post::getState() const{
-    return this->state;
+    return this -> state;
 }
 
 void Post::turnOff(){
