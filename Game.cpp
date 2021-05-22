@@ -34,10 +34,19 @@ void Game::setObjectsFromMap(std::ifstream &map){
 }
 
 bool Game::play(){
+    bool run = true;  // variable to keep game going
+    bool endState;
     auto gameStart = chrono::steady_clock::now();  // starts clock to count gametime
-    // lots of gameplay here
+    while(run){
+        /*  NOT WORKING YET
+        showDisplay();  // print current state of map
+        // check conditions for win/lost, end loop if needed, set boolean for return
+        // movement, starting at input (including ctrl-z/ctrl-d)
+        */
+    }
     auto gameEnd = chrono::steady_clock::now();  // time when game is over   
     this -> timePlayed= chrono::duration_cast<chrono::seconds>(gameEnd - gameStart).count();  // full time played
+    return endState;
 }
 
 
