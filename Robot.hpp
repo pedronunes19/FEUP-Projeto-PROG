@@ -1,16 +1,21 @@
-// T04_G02
-#include <vector>
-using namespace std;
+#include "gamestructs.hpp"
 
-class Robot
-{
+class Robot {
 public:
-    Robot();
-    void setPos(const vector<int> &new_pos);
-    vector<int> getPos() const;
-    void kill();
+	Robot(int x, int y);
+	Robot(Position pos);
+	int getID() const;
+	char getSymbol() const;
+	Position getPos() const;
+	bool isAlive() const;
+	void move(Movement move);
+	void kill();
 
 private:
-    vector<int> pos{2};
-    bool alive;
-};
+	static int robotCounter;
+	int id;
+	Position pos;
+	bool alive;
+	char symbol;
+}
+
