@@ -19,13 +19,13 @@ void Game::setObjectsFromMap(std::ifstream &map){
         for (int x = 0; x < currentLine.length(); x++) {  // read every character in the line 
             char temp = currentLine[x];
             if (temp == 'H'){
-                // store coordinates for player
+                this->player = Player(x,y);
             }
             if (temp == 'R'){
-                // store coordinates for robot and append to robots vector
+                robots.push_back(Robot(x,y));
             }
             if (temp == '*' || temp == '+' || temp == 'O'){
-                Post p(temp, x, y);
+                Post p(x, y, temp);
                 maze.addPost(p);
             }
         }
@@ -41,3 +41,21 @@ bool Game::play(){
 }
 
 
+
+bool Game::collide(Robot& robot, Post& post) const{
+    return (robot.getPos() == post.getPos());
+}
+
+bool Game::collide(Robot& robot, Player& player) const{
+    return (robot.getPos() == player.getPos());
+}
+
+bool Game::collide(Robot& robot0, Robot& robot1) const
+{
+    return (robot0.getPos()==robot1.getPos());
+}
+
+bool Game::collide(Player& player, Post& post) const
+{
+    return (player.getPos()==post.getPos());
+}

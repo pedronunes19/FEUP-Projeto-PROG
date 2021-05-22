@@ -3,7 +3,6 @@
 class Robot {
 public:
 	Robot(int x, int y);
-	Robot(Position pos);
 	int getID() const;
 	char getSymbol() const;
 	Position getPos() const;
@@ -17,5 +16,5 @@ private:
 	Position pos;
 	bool alive;
 	char symbol;
-}
+};
 

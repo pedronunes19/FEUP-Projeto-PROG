@@ -4,4 +4,9 @@ struct Movement {
 
 struct Position {
 	int x, y;
+	bool operator==(const Position& pos)
+	{
+		return (x==pos.x && y==pos.y);
+	}
 };
+

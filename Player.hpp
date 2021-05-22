@@ -2,8 +2,8 @@
 
 class Player {
 public:
+    Player();
 	Player(int x, int y);
-	Player(Position pos);
 	Position getPos() const;
 	char getSymbol() const;
 	bool isAlive() const;

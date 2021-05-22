@@ -4,7 +4,6 @@
 class Post{
 public:
     Post(int x, int y, char ch );
-	Post(Position pos, char ch );
 	Position getPos() const;
     bool isElectrified() const;
     void turnOff();

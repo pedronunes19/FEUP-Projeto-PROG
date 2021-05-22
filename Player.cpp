@@ -1,16 +1,13 @@
 #include "Player.hpp"
 
+Player::Player(){
+
+}
+
 Player::Player(int x, int y)
 {
 	this->pos.x = x;
 	this->pos.y = y;
-	this->alive = true;
-	this->symbol = 'H';
-}
-
-Player::Player(Position pos)
-{
-	this->pos = pos;
 	this->alive = true;
 	this->symbol = 'H';
 }

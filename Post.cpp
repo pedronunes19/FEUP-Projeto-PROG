@@ -8,12 +8,6 @@ Post::Post(int x, int y, char ch)
 	this->electrified = ch;
 }
 
-Post::Post(Position pos, char ch )
-{
-	this->pos = pos;
-	this->electrified = ch;
-}
-
 Position Post::getPos() const
 {
 	return this->pos;

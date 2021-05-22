@@ -24,18 +24,22 @@ void Maze::setDimensions(std::ifstream &map){
 }
 
 std::string Maze::getMapName(){
-    return mapName;
+    return this->mapName;
 }
 
 
 int Maze::getHeight() const{
-    return height;
+    return this->height;
 }
 
 int Maze::getWidth() const{
-    return width;
+    return this->width;
 }
 
 void Maze::addPost(Post p){
     posts.push_back(p);
+}
+
+Post& Maze::getPost(int index){
+    return this->posts[index];
 }

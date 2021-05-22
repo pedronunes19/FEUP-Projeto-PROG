@@ -11,14 +11,6 @@ Robot::Robot(int x, int y)
 	this->id = ++robotCounter;
 }
 
-Robot::Robot(Position pos)
-{
-	this->pos = pos;
-	this->symbol = 'R';
-	this->alive = true;
-	this->id = ++robotCounter;
-}
-
 int Robot::getID() const
 {
 	return this->id;
