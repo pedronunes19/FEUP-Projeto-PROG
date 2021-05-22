@@ -1,14 +1,16 @@
-// T04_G02
+#include "gamestructs.hpp"
 
-#include <vector>
-
-
-class Player{
+class Player {
 public:
-    Player();
-    void setPos(const std::vector<int> &new_pos);
-    std::vector<int> getPos() const;
+	Player(int x, int y);
+	Player(Position pos);
+	Position getPos() const;
+	char getSymbol() const;
+	bool isAlive() const;
+	void kill();
+	bool move(Movement delta);
 private:
-    bool alive;
-    std::vector<int> pos{2};
+	Position pos;
+	bool alive;
+	char symbol;
 };
