@@ -1,15 +1,31 @@
 #include "Post.hpp"
 
-Post::Post(char ch, int x, int y){
-    this -> state = ch;
-    this -> x = x;
-    this -> y = y;
+Post::Post(int x, int y, char ch)
+{
+	this->pos.x = x;
+	this->pos.y = y;
+
+	this->electrified = ch;
 }
 
-char Post::getState() const{
-    return this -> state;
+Post::Post(Position pos, char ch )
+{
+	this->pos = pos;
+	this->electrified = ch;
 }
 
-void Post::turnOff(){
-    this -> state = '+';
+Position Post::getPos() const
+{
+	return this->pos;
+}
+
+bool Post::isElectrified() const
+{
+	if ( this->electrified == '*' ) return true;
+	return false;
+}
+
+void Post::turnOff()
+{
+	this->electrified = '+';
 }

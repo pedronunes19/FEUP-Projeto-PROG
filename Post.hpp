@@ -1,12 +1,15 @@
 // T04_G02
+#include "gamestructs.hpp"
 
 class Post{
 public:
-    Post(char ch, int x, int y);
-    char getState() const;
+    Post(int x, int y, char ch );
+	Post(Position pos, char ch );
+	Position getPos() const;
+    bool isElectrified() const;
     void turnOff();
 
 private:
-    char state;  // 3 states -> '*' for electrified posts, '+' for non electrified posts, 'O' for exits
-    int x, y;
+    char electrified;  // 3 states -> '*' for electrified posts, '+' for non electrified posts, 'O' for exits
+	Position pos;
 };
