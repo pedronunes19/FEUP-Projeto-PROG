@@ -1,16 +1,37 @@
-// T04_G02
-
 #include "Player.hpp"
 
-Player::Player(){
-    this -> alive = true;
+Player::Player(int x, int y)
+{
+	this->pos.x = x;
+	this->pos.y = y;
+	this->alive = true;
+	this->symbol = 'H';
 }
 
-void Player::setPos(const std::vector<int> &new_pos){
-    this->pos[0] = new_pos[0];
-    this->pos[1] = new_pos[1];
+Player::Player(Position pos)
+{
+	this->pos = pos;
+	this->alive = true;
+	this->symbol = 'H';
 }
 
-std::vector<int> Player::getPos() const{
-    return this->pos;
+Position Player::getPos() const
+{
+	return this->pos;
+}
+
+char Player::getSymbol() const
+{
+	return this->symbol;
+}
+
+bool Player::isAlive() const
+{
+	return this->alive;
+}
+
+void Player::kill()
+{
+	this->alive = false;
+	this->symbol = 'h';
 }
