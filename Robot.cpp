@@ -1,19 +1,46 @@
-// T04_G02
 #include "Robot.hpp"
 
-Robot::Robot(){
-    this->alive=true;
+int Robot::robotCounter = 0;
+
+Robot::Robot(int x, int y)
+{
+	this->pos.x = x;
+	this->pos.y = y;
+	this->symbol = 'R';
+	this->alive = true;
+	this->id = ++robotCounter;
 }
 
-void Robot::setPos(const vector<int> &new_pos){
-    this->pos[0] = new_pos[0];
-    this->pos[1] = new_pos[1];
+Robot::Robot(Position pos)
+{
+	this->pos = pos;
+	this->symbol = 'R';
+	this->alive = true;
+	this->id = ++robotCounter;
 }
 
-vector<int> Robot::getPos() const{
-    return this->pos;
+int Robot::getID() const
+{
+	return this->id;
 }
 
-void Robot::kill(){
-    this ->alive = false;
+Position Robot::getPos() const
+{
+	return this->pos;
+}
+
+char Robot::getSymbol() const
+{
+	return this->symbol;
+}
+
+bool Robot::isAlive() const
+{
+	return this->alive;
+}
+
+void Robot::kill()
+{
+	this->alive = false;
+	this->symbol = 'r';
 }
