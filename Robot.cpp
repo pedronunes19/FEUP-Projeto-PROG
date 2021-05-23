@@ -36,3 +36,8 @@ void Robot::kill()
 	this->alive = false;
 	this->symbol = 'r';
 }
+
+void Robot::move(Movement delta)
+{
+	this->pos = this->pos + delta;
+}

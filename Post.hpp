@@ -7,8 +7,9 @@ public:
 	Position getPos() const;
     bool isElectrified() const;
     void turnOff();
+    bool isExit() const;
 
 private:
-    char electrified;  // 3 states -> '*' for electrified posts, '+' for non electrified posts, 'O' for exits
+    char state;  // 3 states -> '*' for electrified posts, '+' for non electrified posts, 'O' for exits
 	Position pos;
 };

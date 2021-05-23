@@ -8,7 +8,6 @@
 #include "Maze.hpp"
 #include "Player.hpp"
 #include "Robot.hpp"
-#include "gamestructs.hpp"
 
 using namespace std;
 
@@ -21,10 +20,10 @@ class Game{
         void showDisplay() const;  // no need to update display (is always up to date)
         void movePlayer();
         void moveRobots();
-        bool collide(Robot& robot, Post& post) const; // check if robot collided with post (and possibly set it as dead)
-        bool collide(Robot& robot, Player& player) const; // check if human and robot collided (and possibly set human as dead)
-        bool collide(Robot& robot0, Robot& robot1) const; // check if two robots collided (and possibly set both as dead/stuck)
-        bool collide(Player& player, Post& post) const; // check if human collided with post (and possibly set human as dead), will be used also for testing if the player meets the exit
+        bool collide(Robot& robot, Post& post) const; // check if robot collided with post 
+        bool collide(Robot& robot, Player& player) const; // check if human and robot collided 
+        bool collide(Robot& robot0, Robot& robot1) const; // check if two robots collided 
+        bool collide(Player& player, Post& post) const; // check if human collided with post, will be used also for testing if the player meets the exit
     private:
         Maze maze;
         Player player;

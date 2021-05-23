@@ -7,8 +7,8 @@ public:
 	char getSymbol() const;
 	Position getPos() const;
 	bool isAlive() const;
-	void move(Movement move);
 	void kill();
+	void move(Movement delta);
 
 private:
 	static int robotCounter;

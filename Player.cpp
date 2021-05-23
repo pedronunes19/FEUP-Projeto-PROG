@@ -32,3 +32,8 @@ void Player::kill()
 	this->alive = false;
 	this->symbol = 'h';
 }
+
+void Player::move(Movement delta)
+{
+	this->pos = this->pos + delta;
+}

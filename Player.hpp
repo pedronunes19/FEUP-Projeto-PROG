@@ -8,7 +8,7 @@ public:
 	char getSymbol() const;
 	bool isAlive() const;
 	void kill();
-	bool move(Movement delta);
+	void move(Movement delta);
 private:
 	Position pos;
 	bool alive;

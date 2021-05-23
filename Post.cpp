@@ -5,7 +5,7 @@ Post::Post(int x, int y, char ch)
 	this->pos.x = x;
 	this->pos.y = y;
 
-	this->electrified = ch;
+	this->state = ch;
 }
 
 Position Post::getPos() const
@@ -15,11 +15,15 @@ Position Post::getPos() const
 
 bool Post::isElectrified() const
 {
-	if ( this->electrified == '*' ) return true;
-	return false;
+	return ( this->state == '*' );
 }
 
 void Post::turnOff()
 {
-	this->electrified = '+';
+	this->state = '+';
+}
+
+bool Post::isExit() const
+{
+	return ( this->state == 'O' );
 }

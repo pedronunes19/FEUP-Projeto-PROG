@@ -48,10 +48,6 @@ string getMapNameStart(){
         if (mapNumber == "0"){  // go back to menu
             cout << "ainda não sei o que fazer aqui mas tem de voltar ao menu" << endl;  // to be fixed
         }
-        if (cin.eof()){  // end with CTRL-Z/CTRL-D
-            cout << "Program terminated with CTRL-Z or CTRL-D";
-            exit(99);
-        }
         mapFile = "MAZE_" + mapNumber + ".txt";  // creates file name from number chosen by user
         if (fileExists(mapFile)){
             noFile = false;

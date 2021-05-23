@@ -36,6 +36,10 @@ int Maze::getWidth() const{
     return this->width;
 }
 
+int Maze::getNumberOfPosts() const{
+    return this->posts.size();
+}
+
 void Maze::addPost(Post p){
     posts.push_back(p);
 }
