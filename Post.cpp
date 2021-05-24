@@ -27,3 +27,7 @@ bool Post::isExit() const
 {
 	return ( this->state == 'O' );
 }
+
+char Post::getChar() const{
+	return this->state;
+}

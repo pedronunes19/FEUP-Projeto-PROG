@@ -9,8 +9,9 @@ int main() {
         int menuOption;
         menu();  // display starting menu
         cin >> menuOption;
-        if (cin.eof()){  // closes program with CTRL-Z (Windows) or CTRL-D (Linux)
-            break;
+        if (cin.eof()){  // end with CTRL-Z/CTRL-D
+            cout << "Program terminated with CTRL-Z or CTRL-D";
+            exit(99);
         }
         if (cin.fail()){  // avoids error if input is not an integer
             const int safeNumber = 999;

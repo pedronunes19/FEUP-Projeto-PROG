@@ -45,6 +45,10 @@ string getMapNameStart(){
     while(noFile){  // run loop until a valid file name is found
         cout << "Select which map you would like to play (ex. 01, 02, ..., 99) or 0 to go back to the menu: " << endl;
         cin >> mapNumber;
+        if (cin.eof()){  // end with CTRL-Z/CTRL-D
+            cout << "Program terminated with CTRL-Z or CTRL-D";
+            exit(99);
+        }
         if (mapNumber == "0"){  // go back to menu
             cout << "ainda não sei o que fazer aqui mas tem de voltar ao menu" << endl;  // to be fixed
         }

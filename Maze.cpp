@@ -14,7 +14,7 @@ void Maze::setMapName(std::string mapName){
 }
 
 
-void Maze::setDimensions(std::ifstream &map){
+void Maze::setDimensions(std::ifstream &map){  // uses the first line of the file to read dimensions + removes that line from filestream
     std::string firstLine;
     getline(map, firstLine);
     std::stringstream ss;
@@ -42,6 +42,10 @@ int Maze::getNumberOfPosts() const{
 
 void Maze::addPost(Post p){
     posts.push_back(p);
+}
+
+void Maze::delPost(int i){
+    this->posts.erase(posts.begin()+i);
 }
 
 Post& Maze::getPost(int index){

@@ -18,13 +18,13 @@ void Game::setObjectsFromMap(std::ifstream &map){
     while (getline(map,currentLine)){  // reads line by line
         for (int x = 0; x < currentLine.length(); x++) {  // read every character in the line 
             char temp = currentLine[x];
-            if (temp == 'H'){
+            if (temp == 'H'){  // create the player
                 this->player = Player(x,y);
             }
-            if (temp == 'R'){
+            if (temp == 'R'){  // add a robot
                 robots.push_back(Robot(x,y));
             }
-            if (temp == '*' || temp == '+' || temp == 'O'){
+            if (temp == '*' || temp == '+' || temp == 'O'){  // add any type of post
                 Post p(x, y, temp);
                 maze.addPost(p);
             }
@@ -33,13 +33,52 @@ void Game::setObjectsFromMap(std::ifstream &map){
     }
 }
 
+void Game::showDisplay(){
+    char *display = new char[maze.getHeight() * maze.getWidth()];  // allocate a array of dimension height*widht (same size as a 2d array to represent the map visually)
+    /*
+    being x and y the coordinates
+    being height and width the dimensions of the map
+    the index on the display will be -> x + (y * widht)
+    */
+    for (int i = 0; i < maze.getHeight() * maze.getWidth(); i++){  // fill display with empty spaces 
+        display[i] = ' ';
+    }
+    for (int i = 0; i < maze.getNumberOfPosts(); i++){  // iterate through posts and place their representation on the display
+        Position tempPos = maze.getPost(i).getPos();
+        int index = tempPos.x + (tempPos.y*maze.getWidth());  
+        display[index] = maze.getPost(i).getChar();
+    }
+
+    for(Robot r: robots){  // iterate through robots and place their representation on the display
+        Position tempPos = r.getPos();
+        int index = tempPos.x + (tempPos.y*maze.getWidth());
+        display[index] = r.getSymbol();
+    }
+
+    Position tempPos = player.getPos();  // place player's representation on the display
+    int index = tempPos.x + (tempPos.y*maze.getWidth());
+    display[index] = player.getSymbol();
+
+    for (int i = 0; i < maze.getHeight() * maze.getWidth(); i++){  // iterate through the display, and print every char to the screen
+        if (i%maze.getWidth() == 0){  
+            cout << "\n";  // print a \n every time it starts printing a new line of the map (y changes)
+        }
+        cout << display[i];
+    }
+    cout << endl;
+    
+    delete[] display;  // delete the space alllocated before
+}
+
 bool Game::play(){
+    cout << "here" << endl;
     bool run = true;  // variable to keep game going
     bool endState;
     auto gameStart = chrono::steady_clock::now();  // starts clock to count gametime
     while(run){
-        /*  NOT WORKING YET
         showDisplay();  // print current state of map
+        break;
+        /*  NOT WORKING YET
         // check conditions for win/lost, end loop if needed, set boolean for return
         movePlayer();
         moveRobots();
@@ -50,13 +89,11 @@ bool Game::play(){
     return endState;
 }
 
-void Game::movePlayer()
-{
-    Movement move;
-    bool validMove;
+Movement Game::moveInput(){
+    Movement move;  // the movement that will be corresponding to the user's input
+    bool validMove; 
     const string VALIDMOVES = "qweasdzxc";  // string containing every char correponding to a valid move
-    char moveOption;
-    // verify movement validity for player
+    char moveOption;  // player input
     do{
         validMove = true;
         cout << "Move -> ";
@@ -68,74 +105,72 @@ void Game::movePlayer()
         }
         if (cin.fail()){  // staying as a safety measure
             cin.clear();
-            cout << "Invalid move, choose another direction" << endl;
+            cout << "Invalid input" << endl;
             validMove = false;
             continue;
         }
-        if (VALIDMOVES.find(moveOption) == string::npos){
-            cout << "Invalid move, choose another direction" << endl;
+        if (VALIDMOVES.find(moveOption) == string::npos){  // invalid input if moveOption is not in VALIDMOVES
+            cout << "Invalid input" << endl;
             validMove = false;
             continue;
         }
-        moveOption = tolower(moveOption);  // avoid case sensitivity
-        if (moveOption == 'e' || moveOption == 'd' || moveOption == 'c') move.dx = 1;        // define movement on x axis
-        else if (moveOption == 'q' || moveOption == 'a' || moveOption == 'z') move.dx = -1;
-        else move.dx = 0;
-
-        if (moveOption == 'z' || moveOption == 'x' || moveOption == 'c') move.dy = 1;        // define movement on y axis
-        else if (moveOption == 'q' || moveOption == 'w' || moveOption == 'e') move.dy = -1;
-        else move.dy = 0;
-
-        Position temp = this->player.getPos() + move;
-        for (Robot r: robots){
-            if (r.getPos() == temp){
-                if (r.isAlive()){
-                    this->player.kill(); // kill player
-                    this->player.move(move);
-                    return;
-                }
-                if (!r.isAlive()){
-                    cout << "Invalid move, choose another direction" << endl;
-                    validMove = false;
-                    break;
-                }
-            }
-        }
-        if (validMove == false){  // skip Post verification if the move is already invalid after checking robots
-            continue; 
-        }
-        for (int i = 0; i < maze.getNumberOfPosts(); i++){
-            if (maze.getPost(i).getPos() == temp){
-                if (maze.getPost(i).isExit()){
-                    
-                    this->player.move(move);
-                    return;
-                }
-                if (maze.getPost(i).isElectrified()){
-                    this->player.kill(); // kill player
-                    this->player.move(move);
-                    return;
-                }
-                if (!maze.getPost(i).isElectrified()){
-                    cout << "Invalid move, choose another direction" << endl;
-                    validMove = false;
-                    break;
-                }
-            }
-        }
+        
     }while(!validMove);
 
-    this->player.move(move);
+    moveOption = tolower(moveOption);  // avoid case sensitivity
+    // define movement on x axis
+    if (moveOption == 'e' || moveOption == 'd' || moveOption == 'c') 
+        move.dx = 1;        
+    else if (moveOption == 'q' || moveOption == 'a' || moveOption == 'z') 
+        move.dx = -1;
+    else 
+        move.dx = 0;
+
+    // define movement on y axis
+    if (moveOption == 'z' || moveOption == 'x' || moveOption == 'c') 
+        move.dy = 1;       
+    else if (moveOption == 'q' || moveOption == 'w' || moveOption == 'e') 
+        move.dy = -1;
+    else 
+        move.dy = 0;
+
+    return move;   
 }
 
-bool Game::collide(Robot& robot, Post& post)
+void Game::movePlayer()
 {
-    return (robot.getPos() == post.getPos());
+    bool moved = false;
+    Movement move = moveInput();
+    for(Robot& robot: robots){
+        while(!valid_move(player,robot,move)){
+            Movement move = moveInput();
+        }
+    }
 }
 
-bool Game::collide(Player& player, Robot& robot)
+bool Game::valid_move(Robot& robot, int postIndex, Movement mov)            //Returns true if first arg can move
 {
-    if(player.getPos() == robot.getPos()){
+    Post& post = maze.getPost(postIndex);       //Get post reference
+    Position newPos = player.getPos() + mov;
+
+    if(newPos == robot.getPos()){       
+        if(post.isElectrified()){
+            robot.kill();
+            post.turnOff();
+            return false;
+        }
+        else{
+            robot.kill();
+            maze.delPost(postIndex);
+        }
+    }
+    return true;
+}
+
+bool Game::valid_move(Player& player, Robot& robot, Movement mov)           //Returns true if first arg can move
+{
+    Position newPos = player.getPos() + mov;
+    if(newPos == robot.getPos()){
         if(robot.isAlive()){
             player.kill();
             return true;
@@ -145,19 +180,34 @@ bool Game::collide(Player& player, Robot& robot)
     return true;
 }
 
-bool Game::collide(Robot& robot0, Robot& robot1)
+bool Game::valid_move(Robot& robot0, Robot& robot1, Movement mov)           //Returns true if first arg can move
 {
-    return (robot0.getPos()==robot1.getPos());
+    Position newPos = robot0.getPos() + mov;
+    if(newPos == robot1.getPos()){
+        robot0.kill();
+        robot1.kill();
+    }
+    return true;
 }
 
-bool Game::collide(Player& player, Post& post)
+bool Game::valid_move(Player& player, Post& post, Movement mov)             //Returns true if first arg can move
 {
-    if(player.getPos() == post.getPos()){
+    Position newPos = player.getPos() + mov;
+    if(newPos == post.getPos()){
         if(post.isElectrified()){
             player.kill();
+            return true;
+        }
+        else if(post.isExit()){
+            playerExits();
             return true;
         }
         return false;
     }
     return true;
+}
+
+
+void Game::playerExits(){
+    this->playerExited = true;
 }

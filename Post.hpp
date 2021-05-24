@@ -8,6 +8,7 @@ public:
     bool isElectrified() const;
     void turnOff();
     bool isExit() const;
+    char getChar() const;
 
 private:
     char state;  // 3 states -> '*' for electrified posts, '+' for non electrified posts, 'O' for exits

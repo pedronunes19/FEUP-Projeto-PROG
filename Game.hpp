@@ -17,17 +17,20 @@ class Game{
         bool play();  // play the game
     private:
         void setObjectsFromMap(ifstream &map);  // to be used once, at the start of each game
-        void showDisplay() const;  // no need to update display (is always up to date)
-        void movePlayer();
-        void moveRobots();
-        bool collide(Robot& robot, Post& post) const; // check if robot collided with post 
-        bool collide(Robot& robot, Player& player) const; // check if human and robot collided 
-        bool collide(Robot& robot0, Robot& robot1) const; // check if two robots collided 
-        bool collide(Player& player, Post& post) const; // check if human collided with post, will be used also for testing if the player meets the exit
+        void showDisplay();  // no need to update display (is always up to date)
+        Movement moveInput();  // gets the Movement from a valid player movement input (loops until input is accepted)
+        void movePlayer();  // everything related to player movement
+        void moveRobots();  // everything related to robots movement
+        bool valid_move(Robot& robot, int postIndex, Movement mov); // check if robot collided with post 
+        bool valid_move(Player& player, Robot& robot, Movement mov); // check if human and robot collided 
+        bool valid_move(Robot& robot0, Robot& robot1, Movement mov); // check if two robots collided 
+        bool valid_move(Player& player, Post& post, Movement mov); // check if human collided with post (any type)
+        void playerExits();  // signals that the player has found an exit
     private:
-        Maze maze;
+        Maze maze;  // the maze corresponding to the game
         Player player;
         vector <Robot> robots;
-        int timePlayed;
+        int timePlayed;  // time score to use on leaderboards
+        bool playerExited;
 
 };
