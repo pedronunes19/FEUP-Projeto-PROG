@@ -37,8 +37,18 @@ void rulesOption(bool &programExecuting){
         programExecuting = false;
 }
 
-void winnersOption(){
-    // print from winners.txt
+void winnersOption(bool &programExecuting){
+    string line, exitWinners;
+    ifstream winners("winners.txt");
+    while(getline(winners, line)){
+        std::cout << line << endl;
+    }
+    winners.close();  // close stream once winners have been displayed
+    cout << "Press anything when you're ready to leave: ";
+    getline(cin, exitWinners);  // wait for user input to return to menu
+    if (cin.eof())     // CTRL-Z/CTRL-D 
+        programExecuting = false;
+
 }
 /**************************************************************************************************************/
 

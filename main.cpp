@@ -31,7 +31,7 @@ int main() {
                 playOption();
                 break;
             case 3:                                                     // Winners (displays every player that has beaten the game, if there is any)
-                winnersOption();
+                winnersOption(programExecuting);
                 break;
             default:                                                    // In case no valid option is selected
                 cout << "\nPlease choose a valid option" << endl;
