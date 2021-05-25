@@ -42,7 +42,7 @@ class Game{
     private:
         Maze maze;  // the maze corresponding to the game
         Player player;
-		map<int, Robot> robots;
+		map<Position, Robot> robots;
         int timePlayed;  // time score to use on leaderboards
         bool playerExited;
 

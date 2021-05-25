@@ -133,10 +133,10 @@ void Game::showDisplay(){
         display[index] = maze.getPost(i).getChar();
     }
 
-    for(Robot r: robots){  // iterate through robots and place their representation on the display
-        Position tempPos = r.getPos();
+    for(auto const& r: robots){  // iterate through robots and place their representation on the display
+        Position tempPos = r.first;
         int index = tempPos.x + (tempPos.y*maze.getWidth());
-        display[index] = r.getSymbol();
+        display[index] = r.second.getSymbol();
     }
 
     Position tempPos = player.getPos();  // place player's representation on the display
