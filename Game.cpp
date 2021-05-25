@@ -69,28 +69,24 @@ void Game::updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, 
         return;
     }
     // read the player's name
-    bool emptyName = true;
     string playerName;
     const short int MAXNAMELENGTH = 15;
-    while (emptyName){
+    do{
         cout << "Write your name here (max 15 characters): ";
         getline(cin, playerName);
         if (cin.eof()){  // end with CTRL-Z/CTRL-D
             cout << "Program terminated with CTRL-Z or CTRL-D";
             exit(0);
         }
-        if (playerName.length() > 0){
-            if (playerName.length() > MAXNAMELENGTH){  // cut name at character limit
+        if (playerName.length() > MAXNAMELENGTH){  // cut name at character limit
                 playerName = playerName.substr(0, MAXNAMELENGTH);
             }
-            else{
-                for (int i = playerName.length(); i < MAXNAMELENGTH; i++){  
-                    playerName += ' ';  // fill with spaces to fit 15 characters (fits the table better than setw())
-                }
-            }
-            break;
-        }
         cout << "You have to choose a name!" << endl;
+    }while (playerName.empty());
+
+    // may be needed (if not then loop doesn't start)
+    for (int i = playerName.length(); i < MAXNAMELENGTH; i++){  
+        playerName += ' ';  // fill with spaces to fit 15 characters (fits the table better than setw())
     }
 
     // create files with a basic template
@@ -112,7 +108,7 @@ void Game::updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, 
     leaderboard.close();
 
     organizeLeaderboard(mazeLeaderboardFile);  // ordering maze leaderboard
-    
+
     // still to be decided what to do with the winners one
 
 }
