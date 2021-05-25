@@ -53,7 +53,7 @@ int Maze::getNumberOfPosts() const{
 }
 
 void Maze::addPost(Post p){
-    this->posts.insert(pair<this->,p>);
+    this->posts.insert(pair<Position, Post>(p.getPos(),p));
 }
 
 void Maze::delPost(int i){
