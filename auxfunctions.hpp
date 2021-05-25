@@ -8,6 +8,10 @@
 #include <limits>
 #include "Game.hpp"
 
+void deleteWinners(){  // to be used at exit (more explanation on it's purpose on main.cpp)
+    remove("winners.txt");
+}
+
 /**************************************************************************************************************/
 // PRINTING FUNCTIONS
 void menu(){  // function to draw menu to the screen
@@ -50,7 +54,7 @@ string getMapNameStart(){
         cin >> mapNumber;
         if (cin.eof()){  // end with CTRL-Z/CTRL-D
             cout << "Program terminated with CTRL-Z or CTRL-D";
-            exit(99);
+            exit(0);
         }
         if (mapNumber == "0"){  // go back to menu
             cout << "ainda não sei o que fazer aqui mas tem de voltar ao menu" << endl;  // to be fixed
@@ -77,7 +81,7 @@ void playOption(){
     if (gameResult){  
         int pos = mapNameInput.find('.');
         string mapLeaderboardName = mapNameInput.substr(0, mapNameInput.length() - pos) + "_WINNERS.txt";  // create name of leaderboard file (map exclusive)
-        robotgame.updateLeaderboards(mapLeaderboardName, fileExists(mapLeaderboardName), fileExists("winners.txt"), robotgame.getTime());
+        robotgame.updateLeaderboards(mapLeaderboardName, fileExists(mapLeaderboardName), fileExists("winners.txt"));
     }
     else{
         cout << "You lost. Try again" << endl;  // end message if player loses, after this go back to menu

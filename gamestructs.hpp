@@ -23,4 +23,9 @@ struct Position {  // represents a position (coordinates)
 	}
 };
 
+struct LbEntry{ 
+    std::string name;  // player name (includes extra empty spaces because it makes formating a bit easier)
+    int time;  // score (time played)
+};
+
 #endif

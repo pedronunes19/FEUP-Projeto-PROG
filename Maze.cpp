@@ -9,6 +9,8 @@ Maze::Maze(){
     // default constructor
 }
 
+/**************************************************************************************************************/
+// SET METHODS
 void Maze::setMapN(std::string mapName){
     int pos = mapName.find('_');
     int pos1 = mapName.find('.');
@@ -25,7 +27,10 @@ void Maze::setDimensions(std::ifstream &map){  // uses the first line of the fil
     char aux;
     ss >> height >> aux >> width;
 }
+/**************************************************************************************************************/
 
+/**************************************************************************************************************/
+// GET INFO
 std::string Maze::getMapN(){
     return this->mapN;
 }
@@ -38,7 +43,11 @@ int Maze::getHeight() const{
 int Maze::getWidth() const{
     return this->width;
 }
+/**************************************************************************************************************/
 
+
+/**************************************************************************************************************/
+// POSTS
 int Maze::getNumberOfPosts() const{
     return this->posts.size();
 }
@@ -54,3 +63,4 @@ void Maze::delPost(int i){
 Post& Maze::getPost(int index){
     return this->posts[index];
 }
+/**************************************************************************************************************/

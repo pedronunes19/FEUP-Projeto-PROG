@@ -8,9 +8,11 @@
 #include <fstream>
 #include <vector>
 #include <chrono>
+#include <algorithm>
 #include "Maze.hpp"
 #include "Player.hpp"
 #include "Robot.hpp"
+#include "gamestructs.hpp"
 #include <map>
 
 using namespace std;
@@ -19,11 +21,14 @@ class Game{
     public:
         Game(const string &mapName);  // build game from the map file name
         bool play();  // play the game
-        void updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, bool winnersLeaderboard, int time);  /* update (possibly create too) all leaderboards
+        void updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, bool winnersLeaderboard) const;  /* update (possibly create too) all leaderboards
                                                                                                                 second argument signals existance of a leaderboard file (for the map played)
                                                                                                                 third argument signals existance of the overall winners file  */
-        int getTime();
     private:
+        // leaderboard
+        void organizeLeaderboard(string lbPath) const;
+        void readEntries(string lbPath, vector <LbEntry> &entries) const;
+        // play
         void setObjectsFromMap(ifstream &map);  // to be used once, at the start of each game
         void showDisplay();  // no need to update display (is always up to date)
         Movement moveInput();  // gets the Movement from a valid player movement input (loops until input is accepted)

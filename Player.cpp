@@ -3,7 +3,7 @@
 #include "Player.hpp"
 
 Player::Player(){
-
+	// default constructor
 }
 
 Player::Player(int x, int y)
@@ -14,6 +14,9 @@ Player::Player(int x, int y)
 	this->symbol = 'H';
 }
 
+
+/**************************************************************************************************************/
+// GET INFO
 Position Player::getPos() const
 {
 	return this->pos;
@@ -28,7 +31,11 @@ bool Player::isAlive() const
 {
 	return this->alive;
 }
+/**************************************************************************************************************/
 
+
+/**************************************************************************************************************/
+// ACTIONS
 void Player::kill()
 {
 	this->alive = false;
@@ -39,3 +46,4 @@ void Player::move(Movement delta)
 {
 	this->pos = this->pos + delta;
 }
+/**************************************************************************************************************/

@@ -4,6 +4,8 @@
 
 using namespace std;
 
+/**************************************************************************************************************/
+// EVERYTHING RELATED TO BUILDING THE GAME OBJECT
 Game::Game(const string &mapName){
     maze.setMapN(mapName);  // sets the maze with the file name for future use
     ifstream map(mapName);  // open stream to read everything from file
@@ -11,80 +13,6 @@ Game::Game(const string &mapName){
     setObjectsFromMap(map);
     map.close(); // close stream (map file won't be touched after this)
     timePlayed = -1;  // -1 value signals the game hasn't been played (therefore updateLeaderboards will not work)
-}
-
-// PLAY
-bool Game::play(){
-    cout << "here" << endl;
-    bool run = true;  // variable to keep game going
-    bool endState;
-    auto gameStart = chrono::steady_clock::now();  // starts clock to count gametime
-    while(run){
-        showDisplay();  // print current state of map
-        break;
-        /*  NOT WORKING YET
-        // check conditions for win/lost, end loop if needed, set boolean for return
-        movePlayer();
-        moveRobots();
-        */
-    }
-    auto gameEnd = chrono::steady_clock::now();  // time when game is over   
-    this -> timePlayed= chrono::duration_cast<chrono::seconds>(gameEnd - gameStart).count();  // full time played
-    return endState;
-}
-/***************************************************************************************************/
-
-// LEADERBOARD
-void updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, bool winnersLeaderboard, int time){
-    if (time == -1){
-        return;
-    }
-    // read the player's name
-    bool emptyName = true;
-    string playerName;
-    const int MAXNAMELENGTH = 15;
-    while (emptyName){
-        cout << "Write your name here (max 15 characters): ";
-        getline(cin, playerName);
-        if (cin.eof()){  // end with CTRL-Z/CTRL-D
-            cout << "Program terminated with CTRL-Z or CTRL-D";
-            exit(99);
-        }
-        if (playerName.length() > 0){
-            if (playerName.length() > MAXNAMELENGTH){  // cut name at character limit
-                playerName = playerName.substr(0, MAXNAMELENGTH);
-            }
-            else{
-                for (int i = playerName.length(); i < MAXNAMELENGTH; i++){  
-                    playerName += ' ';  // fill with spaces to fit 15 characters (fits the table better than setw())
-                }
-            }
-            break;
-        }
-        cout << "You have to choose a name!" << endl;
-    }
-
-    if (!mazeLeaderboard){
-        ofstream leaderboard(mazeLeaderboardFile);
-        leaderboard << "Player          - Time" << endl << "----------------------" << endl;  // write basic leaderboard template
-        leaderboard.close();
-    }
-    if (!winnersLeaderboard){
-        // create standard format for this file
-    }
-
-    // write the name and time to the file (map)
-    ofstream leaderboard;
-    leaderboard.open(mazeLeaderboardFile, ios::app);
-    leaderboard << playerName << " - " << time << endl;
-    leaderboard.close();
-
-
-}
-/*****************************************************************************************************/
-
-int Game::getTime(){
-    return timePlayed;
 }
 
 void Game::setObjectsFromMap(std::ifstream &map){
@@ -108,7 +36,90 @@ void Game::setObjectsFromMap(std::ifstream &map){
     y++;
     }
 }
+/**************************************************************************************************************/
 
+
+/**************************************************************************************************************/
+// PLAY
+bool Game::play(){
+    cout << "here" << endl;
+    bool run = true;  // variable to keep game going
+    bool endState;
+    auto gameStart = chrono::steady_clock::now();  // starts clock to count gametime
+    while(run){
+        showDisplay();  // print current state of map
+        break;
+        /*  NOT WORKING YET
+        // check conditions for win/lost, end loop if needed, set boolean for return
+        movePlayer();
+        moveRobots();
+        */
+    }
+    auto gameEnd = chrono::steady_clock::now();  // time when game is over   
+    this -> timePlayed= chrono::duration_cast<chrono::seconds>(gameEnd - gameStart).count();  // full time played
+    return endState;
+}
+/**************************************************************************************************************/
+
+
+/**************************************************************************************************************/
+// LEADERBOARD
+void Game::updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, bool winnersLeaderboard) const{
+    if (timePlayed == -1){  // updating leaderboards should only work for Game objects that have been played (Game::play() called)
+        return;
+    }
+    // read the player's name
+    bool emptyName = true;
+    string playerName;
+    const short int MAXNAMELENGTH = 15;
+    while (emptyName){
+        cout << "Write your name here (max 15 characters): ";
+        getline(cin, playerName);
+        if (cin.eof()){  // end with CTRL-Z/CTRL-D
+            cout << "Program terminated with CTRL-Z or CTRL-D";
+            exit(0);
+        }
+        if (playerName.length() > 0){
+            if (playerName.length() > MAXNAMELENGTH){  // cut name at character limit
+                playerName = playerName.substr(0, MAXNAMELENGTH);
+            }
+            else{
+                for (int i = playerName.length(); i < MAXNAMELENGTH; i++){  
+                    playerName += ' ';  // fill with spaces to fit 15 characters (fits the table better than setw())
+                }
+            }
+            break;
+        }
+        cout << "You have to choose a name!" << endl;
+    }
+
+    // create files with a basic template
+    if (!mazeLeaderboard){
+        ofstream leaderboard(mazeLeaderboardFile);
+        leaderboard << "Player          - Time\n----------------------" << endl;  // write basic leaderboard template
+        leaderboard.close();
+    }
+    if (!winnersLeaderboard){
+        ofstream leaderboard("winners.txt");
+        leaderboard << "Player          - Map\n---------------------" << endl;  // write basic leaderboard template
+        leaderboard.close();
+    }
+
+    // write the name and time to the file (map)
+    ofstream leaderboard;
+    leaderboard.open(mazeLeaderboardFile, ios::app);
+    leaderboard << playerName << " - " << timePlayed << endl;
+    leaderboard.close();
+
+    organizeLeaderboard(mazeLeaderboardFile);  // ordering maze leaderboard
+    
+    // still to be decided what to do with the winners one
+
+}
+/**************************************************************************************************************/
+
+
+/**************************************************************************************************************/
 // USED BY PLAY
 void Game::showDisplay(){
     char *display = new char[maze.getHeight() * maze.getWidth()];  // allocate a array of dimension height*widht (same size as a 2d array to represent the map visually)
@@ -159,7 +170,7 @@ Movement Game::moveInput(){
         cin.ignore(numeric_limits<streamsize>::max(), '\n');  // remove the rest of the line from input buffer
         if (cin.eof()){  // end with CTRL-Z/CTRL-D
             cout << "Program terminated with CTRL-Z or CTRL-D";
-            exit(99);
+            exit(0);
         }
         if (cin.fail()){  // staying as a safety measure
             cin.clear();
@@ -269,4 +280,40 @@ bool Game::valid_move(Player& player, Post& post, Movement mov)             //Re
 void Game::playerExits(){
     this->playerExited = true;
 }
-/**************************************************************************************************/
+/**************************************************************************************************************/
+
+
+/**************************************************************************************************************/
+// USED BY UPDATELEADERBOARDS
+void Game::organizeLeaderboard(string lbPath) const{
+    vector <LbEntry> entries;  // vector to store leaderboard entries
+    readEntries(lbPath, entries);  // read all entries
+    ofstream lbFile(lbPath);
+    lbFile << "Player          - Time" << endl << "----------------------" << endl;  // write the first 2 lines back to file
+
+    sort(entries.begin(), entries.end(), [](const LbEntry& lb0, const LbEntry& lb1) -> bool {return lb0.time < lb1.time;});  // sort entries vector by time
+    for(int i = 0; i < entries.size(); i++) {
+        lbFile << entries[i].name << entries[i].time << endl;
+    }
+    lbFile.close();  // close file after writing ordered leaderboard to file
+}
+
+void Game::readEntries(string lbPath, vector <LbEntry> &entries) const{
+    ifstream lbFile(lbPath);   // open leaderboard file for reading
+    string currentLine;
+    const int NAMELENGTH = 18;
+    
+    // skip first 2 lines
+    lbFile.ignore(numeric_limits<streamsize>::max(), '\n');
+    lbFile.ignore(numeric_limits<streamsize>::max(), '\n');
+    
+    while(getline(lbFile, currentLine)){
+        LbEntry currentEntry;
+
+        // store entries
+        currentEntry.name = currentLine.substr(0, NAMELENGTH);
+        currentEntry.time = stoi(currentLine.substr(NAMELENGTH, string::npos - 1));
+        entries.push_back(currentEntry);
+    }
+    lbFile.close();  // close file after reading
+}

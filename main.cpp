@@ -11,10 +11,10 @@ int main() {
         cin >> menuOption;
         if (cin.eof()){  // end with CTRL-Z/CTRL-D
             cout << "Program terminated with CTRL-Z or CTRL-D";
-            exit(99);
+            exit(0);
         }
         if (cin.fail()){  // avoids error if input is not an integer
-            const int safeNumber = 999;
+            const short int safeNumber = 4;
             cin.clear();
             menuOption = safeNumber;
         }
@@ -37,6 +37,8 @@ int main() {
                 cout << "\nPlease choose a valid option" << endl;
         }   
     }
+    atexit(deleteWinners);   /* delete the file that contains the winners from all maps, this way the Winners option shows the winners only from the current execution of the program
+                                (could be an interesting game design choice since the especific maze leaderboards already keep data from previous executions)*/
     return 0;
 }
 
