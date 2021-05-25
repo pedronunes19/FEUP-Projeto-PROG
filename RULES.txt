@@ -20,4 +20,4 @@ Other important info:
 Input:
 - The program reads only the first character when typing the movement;
 - Other input is only considered up to the first blank space (for example when reading file name, '01', '01  ' and '01  5' are all considered by the program as '01').
-Press any character when you're ready to leave
+Press anything when you're ready to leave

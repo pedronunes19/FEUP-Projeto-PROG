@@ -4,6 +4,7 @@
 #define GAME_H  // avoid compiling errors related to redefinition
 
 #include <iostream>
+#include <iomanip>
 #include <limits>
 #include <fstream>
 #include <vector>
@@ -21,7 +22,7 @@ class Game{
     public:
         Game(const string &mapName);  // build game from the map file name
         bool play();  // play the game
-        void updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, bool winnersLeaderboard) const;  /* update (possibly create too) all leaderboards
+        void updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, bool winnersLeaderboard);  /* update (possibly create too) all leaderboards
                                                                                                                 second argument signals existance of a leaderboard file (for the map played)
                                                                                                                 third argument signals existance of the overall winners file  */
     private:

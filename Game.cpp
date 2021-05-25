@@ -64,7 +64,7 @@ bool Game::play(){
 
 /**************************************************************************************************************/
 // LEADERBOARD
-void Game::updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, bool winnersLeaderboard) const{
+void Game::updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, bool winnersLeaderboard){
     if (timePlayed == -1){  // updating leaderboards should only work for Game objects that have been played (Game::play() called)
         return;
     }
@@ -97,7 +97,7 @@ void Game::updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, 
     }
     if (!winnersLeaderboard){
         ofstream leaderboard("winners.txt");
-        leaderboard << "Player          - Map\n---------------------" << endl;  // write basic leaderboard template
+        leaderboard << "Player          - Map - Time\n----------------------------" << endl;  // write basic leaderboard template
         leaderboard.close();
     }
 
@@ -109,7 +109,13 @@ void Game::updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, 
 
     organizeLeaderboard(mazeLeaderboardFile);  // ordering maze leaderboard
 
-    // still to be decided what to do with the winners one
+    ofstream leaderboard;
+    leaderboard.open("winners.txt", ios::app);
+    leaderboard << playerName << " - " << setw(3) << maze.getMapN() << " - " << timePlayed << endl;
+    leaderboard.close();
+
+    organizeLeaderboard("winners.txt");  // ordering maze leaderboard
+    
 
 }
 /**************************************************************************************************************/
@@ -285,19 +291,25 @@ void Game::organizeLeaderboard(string lbPath) const{
     vector <LbEntry> entries;  // vector to store leaderboard entries
     readEntries(lbPath, entries);  // read all entries
     ofstream lbFile(lbPath);
-    lbFile << "Player          - Time" << endl << "----------------------" << endl;  // write the first 2 lines back to file
+    if (lbPath == "winners.txt"){
+        lbFile << "Player          - Map - Time\n----------------------------" << endl;  // write the first 2 lines back to file
+    }
+    else
+        lbFile << "Player          - Time\n----------------------" << endl;  // write the first 2 lines back to file
 
     sort(entries.begin(), entries.end(), [](const LbEntry& lb0, const LbEntry& lb1) -> bool {return lb0.time < lb1.time;});  // sort entries vector by time
     for(int i = 0; i < entries.size(); i++) {
         lbFile << entries[i].name << entries[i].time << endl;
     }
     lbFile.close();  // close file after writing ordered leaderboard to file
+    entries.clear();  // delete everything from entries vector (clean memory)
 }
 
 void Game::readEntries(string lbPath, vector <LbEntry> &entries) const{
     ifstream lbFile(lbPath);   // open leaderboard file for reading
     string currentLine;
-    const int NAMELENGTH = 18;
+    const short int OFFSET = 6;
+    const short int NAMELENGTH = 18;
     
     // skip first 2 lines
     lbFile.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -307,8 +319,14 @@ void Game::readEntries(string lbPath, vector <LbEntry> &entries) const{
         LbEntry currentEntry;
 
         // store entries
-        currentEntry.name = currentLine.substr(0, NAMELENGTH);
-        currentEntry.time = stoi(currentLine.substr(NAMELENGTH, string::npos - 1));
+        if (lbPath == "winners.txt"){
+            currentEntry.name = currentLine.substr(0, NAMELENGTH + OFFSET);
+            currentEntry.time = stoi(currentLine.substr(NAMELENGTH + OFFSET, string::npos - 1));
+        }
+        else{
+            currentEntry.name = currentLine.substr(0, NAMELENGTH);
+            currentEntry.time = stoi(currentLine.substr(NAMELENGTH, string::npos - 1));
+        }
         entries.push_back(currentEntry);
     }
     lbFile.close();  // close file after reading
