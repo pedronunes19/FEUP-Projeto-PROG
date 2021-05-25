@@ -36,6 +36,10 @@ void rulesOption(bool &programExecuting){
     if (cin.eof())     // CTRL-Z/CTRL-D 
         programExecuting = false;
 }
+
+void winnersOption(){
+    // print from winners.txt
+}
 /**************************************************************************************************************/
 
 
