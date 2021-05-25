@@ -1,5 +1,8 @@
 // T04_G02
 
+#ifndef FUNCTIONS_H
+#define FUNCTIONS_H  // avoid compiling errors related to redefinition
+
 #include <iostream>
 #include <fstream>
 #include <limits>
@@ -72,9 +75,13 @@ void playOption(){
     Game robotgame(mapNameInput);  // build the Game object
     bool gameResult = robotgame.play();  // this initilazation will run the game, and store the result (win or lost) right after
     if (gameResult){  
-        // what happens if the player wins
+        int pos = mapNameInput.find('.');
+        string mapLeaderboardName = mapNameInput.substr(0, mapNameInput.length() - pos) + "_WINNERS.txt";  // create name of leaderboard file (map exclusive)
+        robotgame.updateLeaderboards(mapLeaderboardName, fileExists(mapLeaderboardName), fileExists("winners.txt"), robotgame.getTime());
     }
     else{
         cout << "You lost. Try again" << endl;  // end message if player loses, after this go back to menu
     }
 }
+
+#endif

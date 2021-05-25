@@ -1,3 +1,8 @@
+// T04_G02
+
+#ifndef ROBOT_H
+#define ROBOT_H  // avoid compiling errors related to redefinition
+
 #include "gamestructs.hpp"
 
 class Robot {
@@ -18,3 +23,4 @@ private:
 	char symbol;
 };
 
+#endif

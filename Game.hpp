@@ -1,5 +1,8 @@
 // T04_G02
 
+#ifndef GAME_H
+#define GAME_H  // avoid compiling errors related to redefinition
+
 #include <iostream>
 #include <limits>
 #include <fstream>
@@ -8,6 +11,7 @@
 #include "Maze.hpp"
 #include "Player.hpp"
 #include "Robot.hpp"
+#include <map>
 
 using namespace std;
 
@@ -15,6 +19,10 @@ class Game{
     public:
         Game(const string &mapName);  // build game from the map file name
         bool play();  // play the game
+        void updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, bool winnersLeaderboard, int time);  /* update (possibly create too) all leaderboards
+                                                                                                                second argument signals existance of a leaderboard file (for the map played)
+                                                                                                                third argument signals existance of the overall winners file  */
+        int getTime();
     private:
         void setObjectsFromMap(ifstream &map);  // to be used once, at the start of each game
         void showDisplay();  // no need to update display (is always up to date)
@@ -29,8 +37,10 @@ class Game{
     private:
         Maze maze;  // the maze corresponding to the game
         Player player;
-        vector <Robot> robots;
+		map<int, Robot> robots;
         int timePlayed;  // time score to use on leaderboards
         bool playerExited;
 
 };
+
+#endif

@@ -1,3 +1,8 @@
+// T04_G02
+
+#ifndef PLAYER_H
+#define PLAYER_H  // avoid compiling errors related to redefinition
+
 #include "gamestructs.hpp"
 
 class Player {
@@ -14,3 +19,5 @@ private:
 	bool alive;
 	char symbol;
 };
+
+#endif
