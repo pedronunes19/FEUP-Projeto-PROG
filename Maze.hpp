@@ -9,7 +9,7 @@
 #include "Post.hpp"
 #include <map>
 
-using namespace std;
+typedef std::map<Position, Post, MapComparator> mapPost;
 
 class Maze{
     public:
@@ -20,13 +20,14 @@ class Maze{
         int getHeight() const;
         int getWidth() const;
         void addPost(Post p);
-        void delPost(int i);
-        Post& getPost(int index);  // allow to use individual posts, as well as modify them since they're returned as references
+        void delPost(Position pos);
+        mapPost& getPostMap();
+        Post& getPost(Position pos);  // allow to use individual posts, as well as modify them since they're returned as references
         int getNumberOfPosts() const;
     private:
-        std::string mapN;
-        int height, width;
-        map <Position,Post> posts;
+        std::string mapN;  // the indication of the maze ("01" or "02" for example)
+        int height, width;  // dimensions
+        mapPost posts;  // map containing every position with a post, paired together with the post itself
 };
 
 #endif

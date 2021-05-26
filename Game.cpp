@@ -24,11 +24,11 @@ void Game::setObjectsFromMap(std::ifstream &map){
             if (temp == 'H'){  // create the player
                 this->player = Player(x,y);
             }
-            if (temp == 'R'){  // add a robot
-				Position temp = {x, y};
+            else if (temp == 'R'){  // add a robot
+                Position temp = {x, y};
 				robots.insert(pair<Position,Robot>(temp,Robot(x,y)));
             }
-            if (temp == '*' || temp == '+' || temp == 'O'){  // add any type of post
+            else if (temp == '*' || temp == '+' || temp == 'O'){  // add any type of post
                 Post p(x, y, temp);
                 maze.addPost(p);
             }
@@ -42,15 +42,18 @@ void Game::setObjectsFromMap(std::ifstream &map){
 /**************************************************************************************************************/
 // PLAY
 bool Game::play(){
-    cout << "here" << endl;
     bool run = true;  // variable to keep game going
     bool endState;
     auto gameStart = chrono::steady_clock::now();  // starts clock to count gametime
     while(run){
         showDisplay();  // print current state of map
+        movePlayer();
+        showDisplay();  // print current state of map
         break;
         /*  NOT WORKING YET
-        // check conditions for win/lost, end loop if needed, set boolean for return
+        if (gameOver()){
+            return gameResult;
+        }
         movePlayer();
         moveRobots();
         */
@@ -102,17 +105,17 @@ void Game::updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, 
     }
 
     // write the name and time to the file (map)
-    ofstream leaderboard;
-    leaderboard.open(mazeLeaderboardFile, ios::app);
-    leaderboard << playerName << " - " << timePlayed << endl;
-    leaderboard.close();
+    ofstream leaderboard0;
+    leaderboard0.open(mazeLeaderboardFile, ios::app);
+    leaderboard0 << playerName << " - " << timePlayed << endl;
+    leaderboard0.close();
 
     organizeLeaderboard(mazeLeaderboardFile);  // ordering maze leaderboard
 
-    ofstream leaderboard;
-    leaderboard.open("winners.txt", ios::app);
-    leaderboard << playerName << " - " << setw(3) << maze.getMapN() << " - " << timePlayed << endl;
-    leaderboard.close();
+    ofstream leaderboard1;
+    leaderboard1.open("winners.txt", ios::app);
+    leaderboard1 << playerName << " - " << setw(3) << maze.getMapN() << " - " << timePlayed << endl;
+    leaderboard1.close();
 
     organizeLeaderboard("winners.txt");  // ordering maze leaderboard
     
@@ -133,10 +136,10 @@ void Game::showDisplay(){
     for (int i = 0; i < maze.getHeight() * maze.getWidth(); i++){  // fill display with empty spaces 
         display[i] = ' ';
     }
-    for (int i = 0; i < maze.getNumberOfPosts(); i++){  // iterate through posts and place their representation on the display
-        Position tempPos = maze.getPost(i).getPos();
+    for (auto i = maze.getPostMap().begin(); i != maze.getPostMap().end(); i++){  // iterate through posts and place their representation on the display
+        Position tempPos = i->first;
         int index = tempPos.x + (tempPos.y*maze.getWidth());  
-        display[index] = maze.getPost(i).getChar();
+        display[index] = i->second.getChar();
     }
 
     for(auto const& r: robots){  // iterate through robots and place their representation on the display
@@ -210,20 +213,62 @@ Movement Game::moveInput(){
 
 void Game::movePlayer()
 {
-    bool moved = false;
-    Movement move = moveInput();
-    for(Robot& robot: robots){
-        while(!valid_move(player,robot,move)){
-            Movement move = moveInput();
+    bool const LOOP = true;
+    Position newPos;
+    Movement move;
+
+    //validCollision() will check validity of the collision and perform corresponding actions if valid
+    /*while(true) loop and exception handling are used to avoid creating 2 different variables for the possibly found robot/post at newPos (like the iterator returned by map.find()),
+    verifying both of their contents to check if a robot/post was found and calling validCollision() with either robot or post as parameter depending on which one was found. */
+    while(LOOP){    //infinite loop, will break when a valid move is found
+        move = moveInput();
+        newPos = player.getPos()+move;
+        try{
+            Robot &collideEntity = robots.at(newPos);       //if robot is found at newPos then check collide, else out_of_range and check if there is a post
+            if(!validCollision(player,collideEntity,newPos)) continue;    //restart cicle if collision is not valid
+            break;  //break if robot was found and collision is valid
+        }
+        catch(out_of_range){
+            try{
+                Post &collideEntity = maze.getPostMap().at(newPos);     //if post is found at newPos then check collide, else out_of_range and break since player moved to empty space
+                if(!validCollision(player,collideEntity,newPos)) continue;    //restart cicle if collision is not valid
+                break;  //break if post was found and collision is valid
+            }
+            catch(out_of_range){
+                break;      //no collisions
+            }
+        }
+    }
+    player.move(move);
+    return;
+}
+/*
+void Game::moveRobots()
+{
+    for (Robot& robot: robots){
+        if (!player.isAlive()) return;  //skip if player is dead
+        if (!robot.isAlive()) continue;  //skip if robot is dead
+
+        Position robotPos = r.getPos();
+        Position playerPos = player.getPos();
+        Movement move;
+
+        if(robotPos.x < playerPos.x) move.dx = 1;        // define direction on x axis
+        else if (robotPos.x > playerPos.x) move.dx = -1;
+        else move.dx = 0;
+
+        if(robotPos.y < playerPos.y) move.dy = 1;        // define direction on y axis
+        else if (robotPos.y > playerPos.y) move.dy = -1;
+        else move.dy = 0;
+        
+        
         }
     }
 }
+*/
 
-bool Game::valid_move(Robot& robot, int postIndex, Movement mov)            //Returns true if first arg can move
+bool Game::validCollision(Robot& robot, Post& post, Position newPos)            //Returns true if first arg can move to newPos
 {
-    Post& post = maze.getPost(postIndex);       //Get post reference
-    Position newPos = player.getPos() + mov;
-
     if(newPos == robot.getPos()){       
         if(post.isElectrified()){
             robot.kill();
@@ -232,15 +277,14 @@ bool Game::valid_move(Robot& robot, int postIndex, Movement mov)            //Re
         }
         else{
             robot.kill();
-            maze.delPost(postIndex);
+            maze.delPost(newPos);
         }
     }
     return true;
 }
 
-bool Game::valid_move(Player& player, Robot& robot, Movement mov)           //Returns true if first arg can move
+bool Game::validCollision(Player& player, Robot& robot, Position newPos)           //Returns true if first arg can move to newPos
 {
-    Position newPos = player.getPos() + mov;
     if(newPos == robot.getPos()){
         if(robot.isAlive()){
             player.kill();
@@ -251,9 +295,8 @@ bool Game::valid_move(Player& player, Robot& robot, Movement mov)           //Re
     return true;
 }
 
-bool Game::valid_move(Robot& robot0, Robot& robot1, Movement mov)           //Returns true if first arg can move
+bool Game::validCollision(Robot& robot0, Robot& robot1, Position newPos)           //Returns true if first arg can move to newPos
 {
-    Position newPos = robot0.getPos() + mov;
     if(newPos == robot1.getPos()){
         robot0.kill();
         robot1.kill();
@@ -261,16 +304,15 @@ bool Game::valid_move(Robot& robot0, Robot& robot1, Movement mov)           //Re
     return true;
 }
 
-bool Game::valid_move(Player& player, Post& post, Movement mov)             //Returns true if first arg can move
+bool Game::validCollision(Player& player, Post& post, Position newPos)             //Returns true if first arg can move to newPos
 {
-    Position newPos = player.getPos() + mov;
     if(newPos == post.getPos()){
         if(post.isElectrified()){
             player.kill();
             return true;
         }
         else if(post.isExit()){
-            playerExits();
+            player.exit();
             return true;
         }
         return false;
@@ -278,10 +320,24 @@ bool Game::valid_move(Player& player, Post& post, Movement mov)             //Re
     return true;
 }
 
-
-void Game::playerExits(){
-    this->playerExited = true;
+bool Game::gameOver(){
+    if(!player.isAlive()){  // end if player is dead, otherwise continue verification
+        gameResult = false;
+        return true;
+    }
+    if(player.hasExited()){  // end if player has found an exit, otherwise continue verification
+        gameResult = true;
+        return true;
+    }
+    for (auto const& r: robots){  // the player hasn't ended the game on it's own, so verify if there are still any robots alive
+        if (r.second.isAlive()){
+            return false;
+        }
+    }
+    gameResult = true;  // if it reaches here, then player is alive and inside the maze, but no robot is alive, the player won
+    return true;
 }
+
 /**************************************************************************************************************/
 
 
@@ -302,14 +358,14 @@ void Game::organizeLeaderboard(string lbPath) const{
         lbFile << entries[i].name << entries[i].time << endl;
     }
     lbFile.close();  // close file after writing ordered leaderboard to file
-    entries.clear();  // delete everything from entries vector (clean memory)
+    entries.clear();  // delete everything from entries vector (would happen anyways at the declaration at the start of organizeLeaderboard when the function is called, it's just a little add-on)
 }
 
 void Game::readEntries(string lbPath, vector <LbEntry> &entries) const{
     ifstream lbFile(lbPath);   // open leaderboard file for reading
     string currentLine;
-    const short int OFFSET = 6;
-    const short int NAMELENGTH = 18;
+    const short int OFFSET = 6;  // offset to add in the general leaderboard, 3 chars for map and 3 chars for " - "
+    const short int NAMELENGTH = 18;  // max size of the name plus 3 characters (corresponding to " - ")
     
     // skip first 2 lines
     lbFile.ignore(numeric_limits<streamsize>::max(), '\n');

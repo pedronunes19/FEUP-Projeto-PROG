@@ -2,6 +2,9 @@
 
 #include "Post.hpp"
 
+Post::Post(){
+	
+}
 
 Post::Post(int x, int y, char ch)
 {

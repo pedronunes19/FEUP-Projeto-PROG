@@ -52,15 +52,19 @@ int Maze::getNumberOfPosts() const{
     return this->posts.size();
 }
 
-void Maze::addPost(Post p){
-    this->posts.insert(pair<Position, Post>(p.getPos(),p));
+void Maze::addPost(Post p){  // add a Post to the the posts data structure
+    this->posts.insert(std::pair<Position, Post>(p.getPos(),p));
 }
 
-void Maze::delPost(int i){
-    this->posts.erase(posts.begin()+i);
+void Maze::delPost(Position pos){  // delete Post at a Position (works fine because there can never be 2 posts on the same position)
+    this->posts.erase(posts.find(pos));
 }
 
-Post& Maze::getPost(int index){
-    return this->posts[index];
+mapPost& Maze::getPostMap(){  // get full data structure for posts
+    return this->posts;
+}
+
+Post& Maze::getPost(Position pos){  // get Post at a Position (works fine because there can never be 2 posts on the same position)
+    return this->posts[pos];
 }
 /**************************************************************************************************************/

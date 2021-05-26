@@ -6,17 +6,18 @@
 #include "gamestructs.hpp"
 
 class Post{
-public:
-    Post(int x, int y, char ch );
-	Position getPos() const;
-    bool isElectrified() const;
-    void turnOff();
-    bool isExit() const;
-    char getChar() const;
+    public:
+        Post();
+        Post(int x, int y, char ch );  // constructor
+	    Position getPos() const;  //returns the position
+        bool isElectrified() const;
+        void turnOff();
+        bool isExit() const;
+        char getChar() const;
 
-private:
-    char state;  // 3 states -> '*' for electrified posts, '+' for non electrified posts, 'O' for exits
-	Position pos;
+    private:
+        char state;  // 3 states -> '*' for electrified posts, '+' for non electrified posts, 'O' for exits
+	    Position pos;  // position
 };
 
 #endif

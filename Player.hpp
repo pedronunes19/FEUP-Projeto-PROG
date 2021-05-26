@@ -12,11 +12,13 @@ public:
 	Position getPos() const;
 	char getSymbol() const;
 	bool isAlive() const;
+	bool hasExited() const;
 	void kill();
 	void move(Movement delta);
+	void exit();  // signals that the player has found an exit
 private:
 	Position pos;
-	bool alive;
+	bool alive, exited;
 	char symbol;
 };
 

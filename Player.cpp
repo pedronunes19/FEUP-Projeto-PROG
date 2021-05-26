@@ -31,6 +31,10 @@ bool Player::isAlive() const
 {
 	return this->alive;
 }
+
+bool Player::hasExited() const{
+	return this->exited;
+}
 /**************************************************************************************************************/
 
 
@@ -45,5 +49,9 @@ void Player::kill()
 void Player::move(Movement delta)
 {
 	this->pos = this->pos + delta;
+}
+
+void Player::exit(){
+	this->exited = true;
 }
 /**************************************************************************************************************/
