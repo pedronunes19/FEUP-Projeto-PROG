@@ -29,7 +29,7 @@ string getMapNameStart(){
             exit(0);
         }
         if (mapNumber == "0"){  // go back to menu
-            return "String para voltar ao menu, não tive nenhuma ideia melhor";
+            return "BACK TO MENU";
         }
         mapFile = "MAZE_" + mapNumber + ".txt";  // creates file name from number chosen by user
         if (fileExists(mapFile)){
@@ -97,7 +97,7 @@ void winnersOption(bool &programExecuting){
 // PLAY FUNCTION (REFLECTS THE PLAY OPTION OF THE MENU)
 void playOption(){
     string mapNameInput = getMapNameStart();  // get the file name to be used for this game
-    if (mapNameInput == "String para voltar ao menu, não tive nenhuma ideia melhor"){
+    if (mapNameInput == "BACK TO MENU"){
         return;
     }
     Game robotgame(mapNameInput);  // build the Game object

@@ -25,9 +25,9 @@ void Game::setObjectsFromMap(std::ifstream &map){
                 this->player = Player(x,y);
             }
             else if (temp == 'R'){  // add a robot
-                Position temp = {x, y};
+                Position tempPos = {x, y};
                 robots.push_back(Robot(x,y));
-				robotsMap.insert(pair<Position,Robot*>(temp,&robots.back()));
+				robotsMap.insert(pair<Position,Robot*>(tempPos,&robots[robots.size()-1]));
             }
             else if (temp == '*' || temp == '+' || temp == 'O'){  // add any type of post
                 Post p(x, y, temp);
@@ -51,7 +51,6 @@ bool Game::play(){
             break;
         }
         movePlayer();
-        cout << endl << "mexeu" << endl;
         moveRobots();
     }
     auto gameEnd = chrono::steady_clock::now();  // time when game is over   
@@ -239,12 +238,13 @@ void Game::movePlayer()
 }
 
 void Game::moveRobots()
-{
+{   
     Position playerPos = player.getPos();
     for (Robot& robot: robots){
-        cout << "1 r" << endl;
-        if (!player.isAlive()) return;  //skip if player is dead
-        if (!robot.isAlive()) continue;  //skip if robot is dead
+        if (!player.isAlive()) 
+            return;  // end robot movement if player is dead
+        if (!robot.isAlive()) 
+            continue;  // skip if robot is dead
 
         Position robotPos = robot.getPos();
         Movement move;
@@ -269,11 +269,11 @@ void Game::moveRobots()
                 robot.kill();
                 collideEntity->kill();
                 robotsMap.erase(robotsMap.find(newPos));
-                cout << robot.isAlive() << collideEntity->isAlive() << robots[2].isAlive()<< endl;
 
             }
             catch(out_of_range){
-                if(newPos == playerPos) player.kill();
+                if(newPos == playerPos) 
+                    player.kill();
             }
         }
         robot.move(move);
