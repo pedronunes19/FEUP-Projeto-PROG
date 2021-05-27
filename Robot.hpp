@@ -7,6 +7,7 @@
 
 class Robot {
 public:
+	Robot();
 	Robot(int x, int y);
 	int getID() const;
 	char getSymbol() const;

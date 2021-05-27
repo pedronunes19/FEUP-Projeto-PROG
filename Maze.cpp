@@ -14,7 +14,7 @@ Maze::Maze(){
 void Maze::setMapN(std::string mapName){
     int pos = mapName.find('_');
     int pos1 = mapName.find('.');
-    std::string mapN = mapName.substr(pos+1, mapName.length()-pos1);
+    std::string mapN = mapName.substr(pos+1, pos1 - pos);
     this -> mapN = mapN;
 }
 

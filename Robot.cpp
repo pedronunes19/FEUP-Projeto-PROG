@@ -4,6 +4,10 @@
 
 int Robot::robotCounter = 0;
 
+Robot::Robot(){
+	
+}
+
 Robot::Robot(int x, int y)
 {
 	this->pos.x = x;

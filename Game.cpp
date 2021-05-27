@@ -26,7 +26,8 @@ void Game::setObjectsFromMap(std::ifstream &map){
             }
             else if (temp == 'R'){  // add a robot
                 Position temp = {x, y};
-				robots.insert(pair<Position,Robot>(temp,Robot(x,y)));
+                robots.push_back(Robot(x,y));
+				robotsMap.insert(pair<Position,Robot*>(temp,&robots.back()));
             }
             else if (temp == '*' || temp == '+' || temp == 'O'){  // add any type of post
                 Post p(x, y, temp);
@@ -43,24 +44,19 @@ void Game::setObjectsFromMap(std::ifstream &map){
 // PLAY
 bool Game::play(){
     bool run = true;  // variable to keep game going
-    bool endState;
     auto gameStart = chrono::steady_clock::now();  // starts clock to count gametime
     while(run){
         showDisplay();  // print current state of map
-        movePlayer();
-        showDisplay();  // print current state of map
-        break;
-        /*  NOT WORKING YET
         if (gameOver()){
-            return gameResult;
+            break;
         }
         movePlayer();
+        cout << endl << "mexeu" << endl;
         moveRobots();
-        */
     }
     auto gameEnd = chrono::steady_clock::now();  // time when game is over   
     this -> timePlayed= chrono::duration_cast<chrono::seconds>(gameEnd - gameStart).count();  // full time played
-    return endState;
+    return gameResult;
 }
 /**************************************************************************************************************/
 
@@ -143,9 +139,9 @@ void Game::showDisplay(){
     }
 
     for(auto const& r: robots){  // iterate through robots and place their representation on the display
-        Position tempPos = r.first;
+        Position tempPos = r.getPos();
         int index = tempPos.x + (tempPos.y*maze.getWidth());
-        display[index] = r.second.getSymbol();
+        display[index] = r.getSymbol();
     }
 
     Position tempPos = player.getPos();  // place player's representation on the display
@@ -224,13 +220,13 @@ void Game::movePlayer()
         move = moveInput();
         newPos = player.getPos()+move;
         try{
-            Robot &collideEntity = robots.at(newPos);       //if robot is found at newPos then check collide, else out_of_range and check if there is a post
-            if(!validCollision(player,collideEntity,newPos)) continue;    //restart cicle if collision is not valid
+            Robot* collideEntity = robotsMap.at(newPos);       //if robot is found at newPos then check collide, else out_of_range and check if there is a post
+            if(!validCollision(player,*collideEntity,newPos)) continue;    //restart cicle if collision is not valid
             break;  //break if robot was found and collision is valid
         }
         catch(out_of_range){
             try{
-                Post &collideEntity = maze.getPostMap().at(newPos);     //if post is found at newPos then check collide, else out_of_range and break since player moved to empty space
+                Post& collideEntity = maze.getPostMap().at(newPos);     //if post is found at newPos then check collide, else out_of_range and break since player moved to empty space
                 if(!validCollision(player,collideEntity,newPos)) continue;    //restart cicle if collision is not valid
                 break;  //break if post was found and collision is valid
             }
@@ -240,17 +236,17 @@ void Game::movePlayer()
         }
     }
     player.move(move);
-    return;
 }
-/*
+
 void Game::moveRobots()
 {
+    Position playerPos = player.getPos();
     for (Robot& robot: robots){
+        cout << "1 r" << endl;
         if (!player.isAlive()) return;  //skip if player is dead
         if (!robot.isAlive()) continue;  //skip if robot is dead
 
-        Position robotPos = r.getPos();
-        Position playerPos = player.getPos();
+        Position robotPos = robot.getPos();
         Movement move;
 
         if(robotPos.x < playerPos.x) move.dx = 1;        // define direction on x axis
@@ -260,16 +256,35 @@ void Game::moveRobots()
         if(robotPos.y < playerPos.y) move.dy = 1;        // define direction on y axis
         else if (robotPos.y > playerPos.y) move.dy = -1;
         else move.dy = 0;
+
+        Position newPos = robotPos + move;
         
-        
+        try{
+            Post& collideEntity = maze.getPostMap().at(newPos);
+            if(!validCollision(robot,collideEntity,newPos)) continue;
         }
+        catch(out_of_range){
+            try{
+                Robot* collideEntity = robotsMap.at(newPos);
+                robot.kill();
+                collideEntity->kill();
+                robotsMap.erase(robotsMap.find(newPos));
+                cout << robot.isAlive() << collideEntity->isAlive() << robots[2].isAlive()<< endl;
+
+            }
+            catch(out_of_range){
+                if(newPos == playerPos) player.kill();
+            }
+        }
+        robot.move(move);
+        robotsMap.erase(robotsMap.find(robotPos));   // erase element with old pos
+        robotsMap[newPos] = &robot;  // create new element with new pos as key and pointer to current robot
     }
 }
-*/
 
 bool Game::validCollision(Robot& robot, Post& post, Position newPos)            //Returns true if first arg can move to newPos
 {
-    if(newPos == robot.getPos()){       
+    if(newPos == post.getPos()){       
         if(post.isElectrified()){
             robot.kill();
             post.turnOff();
@@ -291,15 +306,6 @@ bool Game::validCollision(Player& player, Robot& robot, Position newPos)        
             return true;
         }
         return false;
-    }
-    return true;
-}
-
-bool Game::validCollision(Robot& robot0, Robot& robot1, Position newPos)           //Returns true if first arg can move to newPos
-{
-    if(newPos == robot1.getPos()){
-        robot0.kill();
-        robot1.kill();
     }
     return true;
 }
@@ -329,13 +335,7 @@ bool Game::gameOver(){
         gameResult = true;
         return true;
     }
-    for (auto const& r: robots){  // the player hasn't ended the game on it's own, so verify if there are still any robots alive
-        if (r.second.isAlive()){
-            return false;
-        }
-    }
-    gameResult = true;  // if it reaches here, then player is alive and inside the maze, but no robot is alive, the player won
-    return true;
+    return false;
 }
 
 /**************************************************************************************************************/

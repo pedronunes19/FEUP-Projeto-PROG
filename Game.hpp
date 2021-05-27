@@ -15,7 +15,7 @@
 #include "Robot.hpp"
 #include "gamestructs.hpp"
 
-typedef std::map<Position, Robot, MapComparator> mapRobot;
+typedef std::map<Position, Robot*, MapComparator> mapRobot;
 
 class Game{
     public:
@@ -42,7 +42,8 @@ class Game{
     private:
         Maze maze;  // the maze corresponding to the game
         Player player; // the player
-		mapRobot robots;  // map containing every position with a robot, paired together with the robot itself
+		mapRobot robotsMap;  // map containing the position of each robot as key, and a pointer to the robot as value (useful to have direct access to the robot at a certain position without looping through every robot and checking its position)
+        std::vector<Robot> robots;  // vector containing robots, ordered according to ID
         int timePlayed;  // time score to use on leaderboards
         bool gameResult;  // value to be returned by play()
 

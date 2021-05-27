@@ -29,7 +29,7 @@ string getMapNameStart(){
             exit(0);
         }
         if (mapNumber == "0"){  // go back to menu
-            cout << "ainda não sei o que fazer aqui mas tem de voltar ao menu" << endl;  // to be fixed
+            return "String para voltar ao menu, não tive nenhuma ideia melhor";
         }
         mapFile = "MAZE_" + mapNumber + ".txt";  // creates file name from number chosen by user
         if (fileExists(mapFile)){
@@ -52,6 +52,7 @@ void menu(){  // function to draw menu to the screen
               << "                                                     \n"
               << "                      1)  Rules                      \n"
               << "                      2)  Play                       \n"
+              << "                      3)  Winners                    \n"
               << "                      0)  Exit                       \n"
               << "                                                     \n"
               << "               Select your option: ";         
@@ -96,11 +97,14 @@ void winnersOption(bool &programExecuting){
 // PLAY FUNCTION (REFLECTS THE PLAY OPTION OF THE MENU)
 void playOption(){
     string mapNameInput = getMapNameStart();  // get the file name to be used for this game
+    if (mapNameInput == "String para voltar ao menu, não tive nenhuma ideia melhor"){
+        return;
+    }
     Game robotgame(mapNameInput);  // build the Game object
     bool gameResult = robotgame.play();  // this initilazation will run the game, and store the result (win or lost) right after
     if (gameResult){  
         int pos = mapNameInput.find('.');
-        string mapLeaderboardName = mapNameInput.substr(0, mapNameInput.length() - pos) + "_WINNERS.txt";  // create name of leaderboard file (map exclusive)
+        string mapLeaderboardName = mapNameInput.substr(0, pos) + "_WINNERS.txt";  // create name of leaderboard file (map exclusive)
         robotgame.updateLeaderboards(mapLeaderboardName, fileExists(mapLeaderboardName), fileExists("winners.txt"));
         std::cout << "Congratulations on beating the game, check how you did with option 3 of the menu" << endl;
     }

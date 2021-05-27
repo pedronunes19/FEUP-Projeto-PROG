@@ -31,16 +31,9 @@ struct LbEntry{
     std::string name;  // player name (includes extra empty spaces because it makes formating a bit easier)
     int time;  // score (time played)
 };
-/*
-bool Position::operator<(const Position& l, const Position& r) {		//overloading global "operator<" to use for internal comparison in std::map
-    return (l.x<r.x || (l.x==r.x && l.y<r.y));
-}
-
-auto  const cmp = [](const Position& l, const Position& r){ return (l.x<r.x || (l.x==r.x && l.y<r.y));};
-*/
 
 struct MapComparator{
-        bool operator()(const Position& l, const Position& r) const { return (l.x<r.x || (l.x==r.x && l.y<r.y));}
+    bool operator()(const Position& l, const Position& r) const { return (l.x<r.x || (l.x==r.x && l.y<r.y));}
 };
 
 
