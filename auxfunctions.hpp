@@ -5,27 +5,22 @@
 
 #include "Game.hpp"
 
-using namespace std;
-
-void deleteWinners(){  // to be used at exit (more explanation on it's purpose on main.cpp)
-    remove("winners.txt");
-}
 
 /**************************************************************************************************************/
 // HELPFUL AUXILIARY FUNCTIONS 
 bool fileExists(std::string fileName){
-    ifstream file(fileName);
+    std::ifstream file(fileName);
     return file.good();  // if file exists, returns true, otherwise returns false
 }
 
-string getMapNameStart(){
-    string mapNumber, mapFile;
+std::string getMapNameStart(){
+    std::string mapNumber, mapFile;
     bool noFile = true;
     while(noFile){  // run loop until a valid file name is found
-        cout << "Select which map you would like to play (ex. 01, 02, ..., 99) or 0 to go back to the menu: " << endl;
-        cin >> mapNumber;
-        if (cin.eof()){  // end with CTRL-Z/CTRL-D
-            cout << "Program terminated with CTRL-Z or CTRL-D";
+        std::cout << "Select which map you would like to play (ex. 01, 02, ..., 99) or 0 to go back to the menu: " << std::endl;
+        std::cin >> mapNumber;
+        if (std::cin.eof()){  // end with CTRL-Z/CTRL-D
+            std::cout << "Program terminated with CTRL-Z or CTRL-D";
             exit(0);
         }
         if (mapNumber == "0"){  // go back to menu
@@ -36,8 +31,8 @@ string getMapNameStart(){
             noFile = false;
             continue;
         }
-        cout << "That map doesn't exist" << endl;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');  // remove the rest of the line from input buffer   
+        std::cout << "That map doesn't exist" << std::endl;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // remove the rest of the line from input buffer   
     }
     return mapFile;
 }
@@ -59,35 +54,50 @@ void menu(){  // function to draw menu to the screen
 }
 
 void rulesOption(bool &programExecuting){
-    string line, exitRules;
-    ifstream rules("RULES.txt");
+    std::string line, exitRules;
+    std::ifstream rules("RULES.txt");
     while(getline(rules, line)){
-        std::cout << line << endl;
+        std::cout << line << std::endl;
     }
     rules.close();  // close stream once rules have been displayed
-    getline(cin, exitRules);  // wait for user input to return to menu
-    if (cin.eof())     // CTRL-Z/CTRL-D 
+    getline(std::cin, exitRules);  // wait for user input to return to menu
+    if (std::cin.eof())     // CTRL-Z/CTRL-D 
         programExecuting = false;
 }
 
 void winnersOption(bool &programExecuting){
-    string exitWinners;
+    std::string exitWinners;
     if (fileExists("winners.txt")){
-        string line;
-        ifstream winners("winners.txt");
+        std::string line;
+        std::ifstream winners("winners.txt");
         while(getline(winners, line)){
-            std::cout << line << endl;
+            std::cout << line << std::endl;
         }
         winners.close();  // close stream once winners have been displayed
     }
     else{
-        std::cout << "There aren't any winners yet" << endl;
+        std::cout << "There aren't any winners yet" << std::endl;
     }
-    cout << "Press anything when you're ready to leave: ";
-    getline(cin, exitWinners);  // wait for user input to return to menu
-    if (cin.eof()){  // CTRL-Z/CTRL-D 
-        cout << "Program terminated with CTRL-Z or CTRL-D";
+    std::cout << "Press anything when you're ready to leave (write 'DELETE' if you want to reset the leaderboard, deleting the current one): ";
+    getline(std::cin, exitWinners);  // wait for user input to return to menu
+    if (std::cin.eof()){  // CTRL-Z/CTRL-D 
+        std::cout << "Program terminated with CTRL-Z or CTRL-D";
         programExecuting = false;
+    }
+    if (exitWinners == "DELETE"){  // in case user wants to reset leaderboard
+        // confirm DELETE
+        char confirmation;
+        std::cout << "Are you sure? You won't be able see this data inside the game anymore ('y'/'Y' to confirm): ";
+        std::cin >> confirmation;
+        if (std::cin.eof()){  // CTRL-Z/CTRL-D 
+            std::cout << "Program terminated with CTRL-Z or CTRL-D";
+            programExecuting = false;
+            return;
+        }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // remove the rest of the line from input buffer
+        std::cin.clear();
+        if (tolower(confirmation) == 'y')
+            remove("winners.txt");  // delete the file that contains the leaderboard (maze leaderboards remain untouched)
     }
 }
 /**************************************************************************************************************/
@@ -96,7 +106,7 @@ void winnersOption(bool &programExecuting){
 /**************************************************************************************************************/
 // PLAY FUNCTION (REFLECTS THE PLAY OPTION OF THE MENU)
 void playOption(){
-    string mapNameInput = getMapNameStart();  // get the file name to be used for this game
+    std::string mapNameInput = getMapNameStart();  // get the file name to be used for this game
     if (mapNameInput == "BACK TO MENU"){
         return;
     }
@@ -104,12 +114,12 @@ void playOption(){
     bool gameResult = robotgame.play();  // this initilazation will run the game, and store the result (win or lost) right after
     if (gameResult){  
         int pos = mapNameInput.find('.');
-        string mapLeaderboardName = mapNameInput.substr(0, pos) + "_WINNERS.txt";  // create name of leaderboard file (map exclusive)
+        std::string mapLeaderboardName = mapNameInput.substr(0, pos) + "_WINNERS.txt";  // create name of leaderboard file (map exclusive)
         robotgame.updateLeaderboards(mapLeaderboardName, fileExists(mapLeaderboardName), fileExists("winners.txt"));
-        std::cout << "Congratulations on beating the game, check how you did with option 3 of the menu" << endl;
+        std::cout << "Congratulations on beating the game, check how you did with option 3 of the menu" << std::endl;
     }
     else{
-        cout << "You lost. Try again" << endl;  // end message if player loses, after this go back to menu
+        std::cout << "You lost. Try again" << std::endl;  // end message if player loses, after this go back to menu
     }
 }
 

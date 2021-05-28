@@ -80,7 +80,6 @@ void Game::updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, 
         if (playerName.length() > MAXNAMELENGTH){  // cut name at character limit
                 playerName = playerName.substr(0, MAXNAMELENGTH);
             }
-        cout << "You have to choose a name!" << endl;
     }while (playerName.empty());
 
     // may be needed (if not then loop doesn't start)

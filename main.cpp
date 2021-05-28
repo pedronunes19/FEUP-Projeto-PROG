@@ -2,6 +2,8 @@
 
 #include "auxfunctions.hpp"
 
+using namespace std;
+
 int main() {
     bool programExecuting = true;
     
@@ -37,8 +39,6 @@ int main() {
                 cout << "\nPlease choose a valid option" << endl;
         }   
     }
-    atexit(deleteWinners);   /* delete the file that contains the winners from all maps, this way the Winners option shows the winners only from the current execution of the program
-                                (could be an interesting game design choice since the especific maze leaderboards already keep data from previous executions)*/
     return 0;
 }
 
