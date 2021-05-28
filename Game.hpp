@@ -15,7 +15,7 @@
 #include "Robot.hpp"
 #include "gamestructs.hpp"
 
-typedef std::map<Position, Robot*, MapComparator> mapRobot;
+typedef std::map<Position, Robot*, MapComparator> mapRobot;  // defines a new type of map that accepts Position as key (this one stores pointers to Robot as value)
 
 class Game{
     public:

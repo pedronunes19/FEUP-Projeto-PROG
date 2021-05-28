@@ -27,7 +27,7 @@ void Game::setObjectsFromMap(std::ifstream &map){
             else if (temp == 'R'){  // add a robot
                 Position tempPos = {x, y};
                 robots.push_back(Robot(x,y));
-				robotsMap.insert(pair<Position,Robot*>(tempPos,&robots[robots.size()-1]));
+				robotsMap.insert(pair<Position,Robot*>(tempPos,&robots[robots.size()-1]));  // TO CHANGE!!!!!!!!! doing it here lead to store outdated pointers
             }
             else if (temp == '*' || temp == '+' || temp == 'O'){  // add any type of post
                 Post p(x, y, temp);
@@ -36,6 +36,7 @@ void Game::setObjectsFromMap(std::ifstream &map){
         }
     y++;
     }
+    // DO ROBOTSMAP HERE INSTEAD
 }
 /**************************************************************************************************************/
 
@@ -249,13 +250,19 @@ void Game::moveRobots()
         Position robotPos = robot.getPos();
         Movement move;
 
-        if(robotPos.x < playerPos.x) move.dx = 1;        // define direction on x axis
-        else if (robotPos.x > playerPos.x) move.dx = -1;
-        else move.dx = 0;
+        if(robotPos.x < playerPos.x)                     // define movement on x axis
+            move.dx = 1;        
+        else if (robotPos.x > playerPos.x) 
+            move.dx = -1;
+        else 
+            move.dx = 0;
 
-        if(robotPos.y < playerPos.y) move.dy = 1;        // define direction on y axis
-        else if (robotPos.y > playerPos.y) move.dy = -1;
-        else move.dy = 0;
+        if(robotPos.y < playerPos.y)                     // define movement on y axis
+            move.dy = 1;        
+        else if (robotPos.y > playerPos.y) 
+            move.dy = -1;
+        else 
+            move.dy = 0;
 
         Position newPos = robotPos + move;
         
@@ -355,7 +362,7 @@ void Game::organizeLeaderboard(string lbPath) const{
 
     sort(entries.begin(), entries.end(), [](const LbEntry& lb0, const LbEntry& lb1) -> bool {return lb0.time < lb1.time;});  // sort entries vector by time
     for(int i = 0; i < entries.size(); i++) {
-        lbFile << entries[i].name << entries[i].time << endl;
+        lbFile << entries[i].info << entries[i].time << endl;
     }
     lbFile.close();  // close file after writing ordered leaderboard to file
     entries.clear();  // delete everything from entries vector (would happen anyways at the declaration at the start of organizeLeaderboard when the function is called, it's just a little add-on)
@@ -376,11 +383,11 @@ void Game::readEntries(string lbPath, vector <LbEntry> &entries) const{
 
         // store entries
         if (lbPath == "winners.txt"){
-            currentEntry.name = currentLine.substr(0, NAMELENGTH + OFFSET);
+            currentEntry.info = currentLine.substr(0, NAMELENGTH + OFFSET);
             currentEntry.time = stoi(currentLine.substr(NAMELENGTH + OFFSET, string::npos - 1));
         }
         else{
-            currentEntry.name = currentLine.substr(0, NAMELENGTH);
+            currentEntry.info = currentLine.substr(0, NAMELENGTH);
             currentEntry.time = stoi(currentLine.substr(NAMELENGTH, string::npos - 1));
         }
         entries.push_back(currentEntry);

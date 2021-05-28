@@ -9,7 +9,7 @@
 #include "Post.hpp"
 #include <map>
 
-typedef std::map<Position, Post, MapComparator> mapPost;
+typedef std::map<Position, Post, MapComparator> mapPost;  // defines a new type of map that accepts Position as key (this one stores Posts as value)
 
 class Maze{
     public:
