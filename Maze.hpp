@@ -14,20 +14,18 @@ typedef std::map<Position, Post, MapComparator> mapPost;  // defines a new type 
 class Maze{
     public:
         Maze();
-        void setMapN(std::string mapName);
-        std::string getMapN();
-        void setDimensions(std::ifstream &map);
+        void setMazeN(std::string mazeName);
+        std::string getMazeN();
+        void setDimensions(std::ifstream &maze);
         int getHeight() const;
         int getWidth() const;
         void addPost(Post p);
         void delPost(Position pos);
-        mapPost& getPostMap();
-        Post& getPost(Position pos);  // allow to use individual posts, as well as modify them since they're returned as references
-        int getNumberOfPosts() const;
+        mapPost& getPostMap();  
     private:
-        std::string mapN;  // the indication of the maze ("01" or "02" for example)
+        std::string mazeN;  // the indication of the maze ("01" or "02" for example)
         int height, width;  // dimensions
-        mapPost posts;  // map containing every position with a post, paired together with the post itself
+        mapPost posts;  // map associating the position of each post as key, and the post itself as value (useful to have direct access to the post at a certain position without looping through every post and checking its position)
 };
 
 #endif

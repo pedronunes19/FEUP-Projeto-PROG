@@ -3,25 +3,17 @@
 #ifndef ROBOT_H
 #define ROBOT_H  // avoid compiling errors related to redefinition
 
+#include "Entity.hpp"
 #include "gamestructs.hpp"
 
-class Robot {
+class Robot: public Entity{
 public:
-	Robot();
 	Robot(int x, int y);
 	int getID() const;
-	char getSymbol() const;
-	Position getPos() const;
-	bool isAlive() const;
-	void kill();
-	void move(Movement delta);
 
 private:
 	static int robotCounter;
 	int id;
-	Position pos;
-	bool alive;
-	char symbol;
 };
 
 #endif

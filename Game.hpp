@@ -19,7 +19,7 @@ typedef std::map<Position, Robot*, MapComparator> mapRobot;  // defines a new ty
 
 class Game{
     public:
-        Game(const std::string &mapName);  // build game from the map file name
+        Game(const std::string &mazeName);  // build game from the map file name
         bool play();  // play the game
         void updateLeaderboards(std::string mazeLeaderboardFile, bool mazeLeaderboard, bool winnersLeaderboard);  /* update (possibly create too) all leaderboards
                                                                                                                 second argument signals existance of a leaderboard file (for the map played)
@@ -36,13 +36,12 @@ class Game{
         void moveRobots();  // everything related to robots movement
         bool validCollision(Robot& robot, Post& post, Position newPos); // check if robot collided with post 
         bool validCollision(Player& player, Robot& robot, Position newPos); // check if human and robot collided 
-        bool validCollision(Robot& robot0, Robot& robot1, Position newPos); // check if two robots collided 
         bool validCollision(Player& player, Post& post, Position newPos); // check if human collided with post (any type)
         bool gameOver();  // verify end of game conditions and set gameResult if needed
     private:
         Maze maze;  // the maze corresponding to the game
         Player player; // the player
-		mapRobot robotsMap;  // map containing the position of each robot as key, and a pointer to the robot as value (useful to have direct access to the robot at a certain position without looping through every robot and checking its position)
+		mapRobot robotsMap;  // map associating every position where there's at least one robot as keys, and a pointer to the last robot to move to that position as value (useful to have direct access to the robot at a certain position without looping through every robot and checking its position)
         std::vector<Robot> robots;  // vector containing robots, ordered according to ID
         int timePlayed;  // time score to use on leaderboards
         bool gameResult;  // value to be returned by play()

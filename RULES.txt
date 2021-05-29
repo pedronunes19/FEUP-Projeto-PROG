@@ -16,6 +16,8 @@ Movement:
 Other important info:
 - When several robots collide, they get stuck and they are all represented by a single symbol, an 'r';
 - If a robot collides with fences/posts it dies, being also represented by an 'r', and the fence/post cell at the position of the collision loses its capability to electrocute;
+- The game ends when the player reaches an exit, or when the player dies;
+- Option 3 of the menu shows you a complete leaderboard of all maps, which you can choose to reset at any time;
 - Time results are shown in seconds.
 Input:
 - The program reads only the first character when typing the movement;

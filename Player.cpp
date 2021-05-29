@@ -2,56 +2,31 @@
 
 #include "Player.hpp"
 
+
+/**************************************************************************************************************/
+// CONSTRUCTORS
 Player::Player(){
 	// default constructor
 }
 
-Player::Player(int x, int y)
+Player::Player(int x, int y) : Entity::Entity(x, y)
 {
-	this->pos.x = x;
-	this->pos.y = y;
-	this->alive = true;
-	this->symbol = 'H';
+	symbol = 'H';
 }
+/**************************************************************************************************************/
 
 
 /**************************************************************************************************************/
 // GET INFO
-Position Player::getPos() const
-{
-	return this->pos;
-}
-
-char Player::getSymbol() const
-{
-	return this->symbol;
-}
-
-bool Player::isAlive() const
-{
-	return this->alive;
-}
-
 bool Player::hasExited() const{
-	return this->exited;
+	return exited;
 }
 /**************************************************************************************************************/
 
 
 /**************************************************************************************************************/
 // ACTIONS
-void Player::kill()
-{
-	this->alive = false;
-	this->symbol = 'h';
-}
-
-void Player::move(Movement delta)
-{
-	this->pos = this->pos + delta;
-}
-
 void Player::exit(){
-	this->exited = true;
+	exited = true;
 }
 /**************************************************************************************************************/

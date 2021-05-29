@@ -4,24 +4,26 @@
 #include <vector>
 #include "Maze.hpp"
 
-
+/**************************************************************************************************************/
+// CONSTRUCTORS
 Maze::Maze(){
     // default constructor
 }
+/**************************************************************************************************************/
+
 
 /**************************************************************************************************************/
 // SET METHODS
-void Maze::setMapN(std::string mapName){
-    int pos = mapName.find('_');
-    int pos1 = mapName.find('.');
-    std::string mapN = mapName.substr(pos+1, pos1 - pos - 1);
-    this -> mapN = mapN;
+void Maze::setMazeN(std::string mazeName){
+    int pos = mazeName.find('_');
+    int pos1 = mazeName.find('.');
+    this -> mazeN = mazeName.substr(pos+1, pos1 - pos - 1);
 }
 
 
-void Maze::setDimensions(std::ifstream &map){  // uses the first line of the file to read dimensions + removes that line from filestream
+void Maze::setDimensions(std::ifstream &maze){  // uses the first line of the file to read dimensions + removes that line from filestream
     std::string firstLine;
-    getline(map, firstLine);
+    getline(maze, firstLine);
     std::stringstream ss;
     ss << firstLine;
     char aux;
@@ -31,26 +33,22 @@ void Maze::setDimensions(std::ifstream &map){  // uses the first line of the fil
 
 /**************************************************************************************************************/
 // GET INFO
-std::string Maze::getMapN(){
-    return this->mapN;
+std::string Maze::getMazeN(){
+    return mazeN;
 }
 
-
 int Maze::getHeight() const{
-    return this->height;
+    return height;
 }
 
 int Maze::getWidth() const{
-    return this->width;
+    return width;
 }
 /**************************************************************************************************************/
 
 
 /**************************************************************************************************************/
 // POSTS
-int Maze::getNumberOfPosts() const{
-    return this->posts.size();
-}
 
 void Maze::addPost(Post p){  // add a Post to the the posts data structure
     this->posts.insert(std::pair<Position, Post>(p.getPos(),p));
@@ -61,10 +59,7 @@ void Maze::delPost(Position pos){  // delete Post at a Position (works fine beca
 }
 
 mapPost& Maze::getPostMap(){  // get full data structure for posts
-    return this->posts;
+    return posts;
 }
 
-Post& Maze::getPost(Position pos){  // get Post at a Position (works fine because there can never be 2 posts on the same position)
-    return this->posts[pos];
-}
 /**************************************************************************************************************/

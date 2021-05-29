@@ -6,9 +6,9 @@ using namespace std;
 
 /**************************************************************************************************************/
 // EVERYTHING RELATED TO BUILDING THE GAME OBJECT
-Game::Game(const string &mapName){
-    maze.setMapN(mapName);  // sets the maze with the file name for future use
-    ifstream map(mapName);  // open stream to read everything from file
+Game::Game(const string &mazeName){
+    maze.setMazeN(mazeName);  // sets the maze with the file name for future use
+    ifstream map(mazeName);  // open stream to read everything from file
     maze.setDimensions(map);  // store maze dimensions
     setObjectsFromMap(map);
     map.close(); // close stream (map file won't be touched after this)
@@ -22,12 +22,11 @@ void Game::setObjectsFromMap(std::ifstream &map){
         for (int x = 0; x < currentLine.length(); x++) {  // read every character in the line 
             char temp = currentLine[x];
             if (temp == 'H'){  // create the player
-                this->player = Player(x,y);
+                player = Player(x,y);
             }
             else if (temp == 'R'){  // add a robot
                 Position tempPos = {x, y};
                 robots.push_back(Robot(x,y));
-				robotsMap.insert(pair<Position,Robot*>(tempPos,&robots[robots.size()-1]));  // TO CHANGE!!!!!!!!! doing it here lead to store outdated pointers
             }
             else if (temp == '*' || temp == '+' || temp == 'O'){  // add any type of post
                 Post p(x, y, temp);
@@ -36,7 +35,10 @@ void Game::setObjectsFromMap(std::ifstream &map){
         }
     y++;
     }
-    // DO ROBOTSMAP HERE INSTEAD
+    for (Robot & robot: robots){
+        robotsMap.insert(pair<Position,Robot*>(robot.getPos(), &robot)); 
+    }
+    
 }
 /**************************************************************************************************************/
 
@@ -109,7 +111,7 @@ void Game::updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, 
 
     ofstream leaderboard1;
     leaderboard1.open("winners.txt", ios::app);
-    leaderboard1 << playerName << " - " << setw(3) << maze.getMapN() << " - " << timePlayed << endl;
+    leaderboard1 << playerName << " - " << setw(3) << maze.getMazeN() << " - " << timePlayed << endl;
     leaderboard1.close();
 
     organizeLeaderboard("winners.txt");  // ordering maze leaderboard
@@ -122,41 +124,34 @@ void Game::updateLeaderboards(string mazeLeaderboardFile, bool mazeLeaderboard, 
 /**************************************************************************************************************/
 // USED BY PLAY
 void Game::showDisplay(){
-    char *display = new char[maze.getHeight() * maze.getWidth()];  // allocate a array of dimension height*widht (same size as a 2d array to represent the map visually)
-    /*
-    being x and y the coordinates
-    being height and width the dimensions of the map
-    the index on the display will be -> x + (y * widht)
-    */
-    for (int i = 0; i < maze.getHeight() * maze.getWidth(); i++){  // fill display with empty spaces 
-        display[i] = ' ';
-    }
-    for (auto i = maze.getPostMap().begin(); i != maze.getPostMap().end(); i++){  // iterate through posts and place their representation on the display
-        Position tempPos = i->first;
-        int index = tempPos.x + (tempPos.y*maze.getWidth());  
-        display[index] = i->second.getChar();
-    }
+    Position pos;
+    for(int y = 0; y < maze.getHeight(); y++){
+        for (int x = 0; x < maze.getWidth(); x++){
+            pos = {x, y};
+            
+            if(player.getPos() == pos){         // print player symbol if player is at current pos
+                cout << player.getSymbol();
+                continue;
+            }
 
-    for(auto const& r: robots){  // iterate through robots and place their representation on the display
-        Position tempPos = r.getPos();
-        int index = tempPos.x + (tempPos.y*maze.getWidth());
-        display[index] = r.getSymbol();
-    }
-
-    Position tempPos = player.getPos();  // place player's representation on the display
-    int index = tempPos.x + (tempPos.y*maze.getWidth());
-    display[index] = player.getSymbol();
-
-    for (int i = 0; i < maze.getHeight() * maze.getWidth(); i++){  // iterate through the display, and print every char to the screen
-        if (i%maze.getWidth() == 0){  
-            cout << "\n";  // print a \n every time it starts printing a new line of the map (y changes)
+            try{
+                cout << robotsMap.at(pos)->getSymbol();     // print robot symbol if there is a robot at current pos
+                continue;
+            }
+            catch(out_of_range){
+                try{
+                    cout << maze.getPostMap().at(pos).getSymbol();      // print post symbol if there is a post at current pos
+                    continue;
+                }
+                catch(out_of_range){
+                    cout << ' ';           // print space if there is nothing at current pos
+                }
+            }
         }
-        cout << display[i];
+        cout << endl;      // end current line
     }
-    cout << endl;
-    
-    delete[] display;  // delete the space allocated before
 }
+
 
 Movement Game::moveInput(){
     Movement move;  // the movement that will be corresponding to the user's input
@@ -208,24 +203,24 @@ Movement Game::moveInput(){
 
 void Game::movePlayer()
 {
-    bool const LOOP = true;
     Position newPos;
     Movement move;
 
     //validCollision() will check validity of the collision and perform corresponding actions if valid
     /*while(true) loop and exception handling are used to avoid creating 2 different variables for the possibly found robot/post at newPos (like the iterator returned by map.find()),
     verifying both of their contents to check if a robot/post was found and calling validCollision() with either robot or post as parameter depending on which one was found. */
-    while(LOOP){    //infinite loop, will break when a valid move is found
+    
+    while(true){    //infinite loop, will break when a valid move is found
         move = moveInput();
         newPos = player.getPos()+move;
         try{
-            Robot* collideEntity = robotsMap.at(newPos);       //if robot is found at newPos then check collide, else out_of_range and check if there is a post
+            Robot* collideEntity = robotsMap.at(newPos);       //if robot is found at newPos then check collision, else out_of_range and check if there is a post
             if(!validCollision(player,*collideEntity,newPos)) continue;    //restart cicle if collision is not valid
             break;  //break if robot was found and collision is valid
         }
         catch(out_of_range){
             try{
-                Post& collideEntity = maze.getPostMap().at(newPos);     //if post is found at newPos then check collide, else out_of_range and break since player moved to empty space
+                Post& collideEntity = maze.getPostMap().at(newPos);     //if post is found at newPos then check collision, else out_of_range and break since player moved to empty space
                 if(!validCollision(player,collideEntity,newPos)) continue;    //restart cicle if collision is not valid
                 break;  //break if post was found and collision is valid
             }
@@ -234,7 +229,7 @@ void Game::movePlayer()
             }
         }
     }
-    player.move(move);
+    player.setPos(newPos);
 }
 
 void Game::moveRobots()
@@ -266,7 +261,7 @@ void Game::moveRobots()
         Position newPos = robotPos + move;
         
         try{
-            Post& collideEntity = maze.getPostMap().at(newPos);
+            Post& collideEntity = maze.getPostMap().at(newPos);         //if post is found at newPos then check collide, else out_of_range and check if there is a post
             if(!validCollision(robot,collideEntity,newPos)) continue;
         }
         catch(out_of_range){
@@ -282,7 +277,7 @@ void Game::moveRobots()
                     player.kill();
             }
         }
-        robot.move(move);
+        robot.setPos(newPos);
         robotsMap.erase(robotsMap.find(robotPos));   // erase element with old pos
         robotsMap[newPos] = &robot;  // create new element with new pos as key and pointer to current robot
     }

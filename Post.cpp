@@ -2,23 +2,26 @@
 
 #include "Post.hpp"
 
+
+/**************************************************************************************************************/
+// CONSTRUCTORS
 Post::Post(){
 	
 }
 
 Post::Post(int x, int y, char ch)
 {
-	this->pos.x = x;
-	this->pos.y = y;
-
-	this->state = ch;
+	pos = {x, y};
+	symbol = ch;
 }
+/**************************************************************************************************************/
+
 
 /**************************************************************************************************************/
 // GET INFO
 Position Post::getPos() const
 {
-	return this->pos;
+	return pos;
 }
 /**************************************************************************************************************/
 
@@ -27,20 +30,20 @@ Position Post::getPos() const
 // STATE RELATED METHODS
 bool Post::isElectrified() const
 {
-	return ( this->state == '*' );
+	return ( symbol == '*' );
 }
 
 void Post::turnOff()
 {
-	this->state = '+';
+	symbol = '+';
 }
 
 bool Post::isExit() const
 {
-	return ( this->state == 'O' );
+	return ( symbol == 'O' );
 }
 
-char Post::getChar() const{
-	return this->state;
+char Post::getSymbol() const{
+	return symbol;
 }
 /**************************************************************************************************************/

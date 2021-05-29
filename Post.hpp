@@ -13,10 +13,10 @@ class Post{
         bool isElectrified() const;
         void turnOff();
         bool isExit() const;
-        char getChar() const;
+        char getSymbol() const;
 
     private:
-        char state;  // 3 states -> '*' for electrified posts, '+' for non electrified posts, 'O' for exits
+        char symbol;  // 3 symbols -> '*' for electrified posts, '+' for non electrified posts, 'O' for exits
 	    Position pos;  // position
 };
 

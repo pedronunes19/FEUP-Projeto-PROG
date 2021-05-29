@@ -54,6 +54,7 @@ void menu(){  // function to draw menu to the screen
 }
 
 void rulesOption(bool &programExecuting){
+    std::cout << std::endl;  // format output (separate menu from option output)
     std::string line, exitRules;
     std::ifstream rules("RULES.txt");
     while(getline(rules, line)){
@@ -66,6 +67,7 @@ void rulesOption(bool &programExecuting){
 }
 
 void winnersOption(bool &programExecuting){
+    std::cout << std::endl;  // format output (separate menu from option output)
     std::string exitWinners;
     if (fileExists("winners.txt")){
         std::string line;
@@ -75,16 +77,22 @@ void winnersOption(bool &programExecuting){
         }
         winners.close();  // close stream once winners have been displayed
     }
-    else{
+    else{  // if there is no leaderboard to show, user can quit without RESET option
         std::cout << "There aren't any winners yet" << std::endl;
+        std::cout << "Press anything when you're ready to leave: ";
+        getline(std::cin, exitWinners);
+        return;
     }
-    std::cout << "Press anything when you're ready to leave (write 'DELETE' if you want to reset the leaderboard, deleting the current one): ";
-    getline(std::cin, exitWinners);  // wait for user input to return to menu
+
+    std::cout << "Press anything when you're ready to leave (write 'RESET' if you want to reset the leaderboard, deleting the current one): ";
+    std::cin >> exitWinners;  // wait for user input to return to menu
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // remove the rest of the line from input buffer
+
     if (std::cin.eof()){  // CTRL-Z/CTRL-D 
         std::cout << "Program terminated with CTRL-Z or CTRL-D";
         programExecuting = false;
     }
-    if (exitWinners == "DELETE"){  // in case user wants to reset leaderboard
+    if (exitWinners == "RESET"){  // in case user wants to reset leaderboard
         // confirm DELETE
         char confirmation;
         std::cout << "Are you sure? You won't be able see this data inside the game anymore ('y'/'Y' to confirm): ";
