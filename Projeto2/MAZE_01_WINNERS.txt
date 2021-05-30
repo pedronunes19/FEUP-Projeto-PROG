@@ -1,11 +1,11 @@
 Player          - Time
 ----------------------
 eu              - 4
-aaaaaaaaaaaaaaa - 4
+1               - 4
 2               - 4
-ddred           - 4
-22w3we3         - 4
+3               - 4
+4               - 4
 w               - 5
 eu              - 13
-eeddredr        - 66
-e               - 92
+eu              - 66
+

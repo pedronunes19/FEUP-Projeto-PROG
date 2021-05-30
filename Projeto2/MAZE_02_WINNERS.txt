@@ -1,4 +1,4 @@
 Player          - Time
 ----------------------
-wswswwswswww    - 32
-q               - 38
+nome            - 32
+1               - 38
