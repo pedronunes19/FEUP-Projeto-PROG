@@ -8,12 +8,12 @@
 
 /**************************************************************************************************************/
 // HELPFUL AUXILIARY FUNCTIONS 
-bool fileExists(std::string fileName){
+bool fileExists(std::string fileName){  // function to check existance of a file (returns true if it exists, false otherwise)
     std::ifstream file(fileName);
     return file.good();  // if file exists, returns true, otherwise returns false
 }
 
-std::string getMapNameStart(){
+std::string getMapNameStart(){  // function to be used before the game to get the map name from user input
     std::string mapNumber, mapFile;
     bool noFile = true;
     while(noFile){  // run loop until a valid file name is found
@@ -53,7 +53,7 @@ void menu(){  // function to draw menu to the screen
               << "               Select your option: ";         
 }
 
-void rulesOption(bool &programExecuting){
+void rulesOption(bool &programExecuting){  // function to print the rules (from RULES.txt)
     std::cout << std::endl;  // format output (separate menu from option output)
     std::string line, exitRules;
     std::ifstream rules("RULES.txt");
@@ -66,7 +66,7 @@ void rulesOption(bool &programExecuting){
         programExecuting = false;
 }
 
-void winnersOption(bool &programExecuting){
+void winnersOption(bool &programExecuting){  // function to print the winners leaderboard (or "There aren't any winners yet" if it does not exist) + alows user to reset leaderboard
     std::cout << std::endl;  // format output (separate menu from option output)
     std::string exitWinners;
     if (fileExists("winners.txt")){
@@ -130,5 +130,6 @@ void playOption(){
         std::cout << "You lost. Try again" << std::endl;  // end message if player loses, after this go back to menu
     }
 }
+/**************************************************************************************************************/
 
 #endif

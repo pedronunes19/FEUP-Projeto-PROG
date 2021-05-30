@@ -9,7 +9,7 @@
 class Robot: public Entity{
 public:
 	Robot(int x, int y);
-	int getID() const;
+	int getID() const;  // returns id value
 
 private:
 	static int robotCounter;

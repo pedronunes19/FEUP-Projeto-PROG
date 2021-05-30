@@ -10,8 +10,8 @@ class Player: public Entity {
 public:
     Player();
 	Player(int x, int y);
-	bool hasExited() const;
-	void exit();  // signals that the player has found an exit
+	bool hasExited() const;  // signals that the player has found an exit
+	void exit();  // set exited to true (the player has now found an exit to the maze)
 private:
 	bool exited;
 };

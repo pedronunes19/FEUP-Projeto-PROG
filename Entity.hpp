@@ -9,11 +9,11 @@ class Entity{
 public:
     Entity();
     Entity(int x, int y);
-	Position getPos() const;
-	void setPos(Position newPos);
-	char getSymbol() const;
-	bool isAlive() const;
-	void kill();
+	Position getPos() const;  // get the position for an entity
+	void setPos(Position newPos);  // set a new position for an entity
+	char getSymbol() const;  // get the symbol of an entity for display
+	bool isAlive() const;  // returns true if entity is alive, false otherwise
+	void kill();  // set bool alive as false (set entity as dead)
 protected:
 	Position pos;
 	bool alive;
