@@ -2,7 +2,7 @@
 First PROG project: Robots Game  
 Second PROG project: Recreate Robots Game using OOP
 
-# Development Stage
+## Development Stage
 - [x] Projects fully finished
 
 
